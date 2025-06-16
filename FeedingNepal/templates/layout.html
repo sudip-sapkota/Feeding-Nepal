@@ -1,0 +1,82 @@
+<!-- templates/layout.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feeding Nepal</title>
+    <!-- Link to External CSS -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <header>
+        <div class="logo">Feeding Nepal</div>
+        <nav>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About Us</a></li>
+                <li><a href="#programs">Programs</a></li>
+                <li><a href="#involved">Get Involved</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="{% url 'admin_login' %}">Admin Login</a></li>
+
+
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content (This will be replaced in individual pages) -->
+    {% block content %}
+    {% endblock %}
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Feeding Nepal</h3>
+                <p>A non-profit organization dedicated to fighting hunger and providing sustainable food solutions in Nepal.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#programs">Programs</a></li>
+                    <li><a href="#involved">Get Involved</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Programs</h3>
+                <ul>
+                    <li><a href="#">Emergency Relief</a></li>
+                    <li><a href="#">Food for Education</a></li>
+                    <li><a href="#">Direct to Market</a></li>
+                    <li><a href="#">Child Nutrition</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Newsletter</h3>
+                <p>Subscribe to our newsletter for updates</p>
+                <div class="newsletter-form">
+                    <input type="email" placeholder="Your email">
+                    <button class="btn btn-small">Subscribe</button>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Feeding Nepal. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Use</a>
+                <a href="#">Site Map</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Link to External JS -->
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>

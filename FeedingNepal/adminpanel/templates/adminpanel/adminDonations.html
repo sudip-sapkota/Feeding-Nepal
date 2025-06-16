@@ -1,0 +1,129 @@
+{% extends "layout.html" %} {%load static%} {% block content %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Feeding Nepal - Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="{% static 'css/astyle.css' %}" />
+    <style></style>
+  </head>
+  <body>
+    <!-- Sidebar and Main Content -->
+    
+  {% include 'adminpanel/adminSidebar.html' %}
+      <!-- Main Content -->
+      <main class="main-content">
+        <h1 class="dashboard-title">Donations Management</h1>
+        <button class="btn-update">Update</button>
+        <div class="tables-container">
+          <div class="table-section full-width">
+            <h3>Donations List</h3>
+            <input
+              type="text"
+              placeholder="Search donations..."
+              style="
+                padding: 8px;
+                margin-bottom: 15px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                float: right;
+                width: 200px;
+              "
+            />
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Food ID</th>
+                  <th>Food Type</th>
+                  <th>Donor ID</th>
+                  <th>Donor Number</th>
+                  <th>Description</th>
+                  <th>Quantity</th>
+                  <th>Pickup Date</th>
+                  <th>Pickup Time</th>
+                  <th>Expiry Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="donationsTableBody">
+                {% for donation in donations %}
+                <tr>
+                  <td>{{ donation.id }}</td>
+                  <td>{{ donation.food_type }}</td>
+                  <td>{{ donation.donor.id }}</td>
+                  <td>{{ donation.donor.phone }}</td>
+                  <td>{{ donation.description }}</td>
+                  <td>{{ donation.quantity }}</td>
+                  <td>
+                    {% if donation.pickup_date %}{{
+                    donation.pickup_date|date:"Y-m-d" }}{% else %}N/A{% endif %}
+                  </td>
+                  <td>
+                    {% if donation.pickup_time %}{{ donation.pickup_time }}{%
+                    else %}N/A{% endif %}
+                  </td>
+                  <td>
+                    {% if donation.expiry_date %}{{
+                    donation.expiry_date|date:"Y-m-d" }}{% else %}N/A{% endif %}
+                  </td>
+                  <td>
+                    <div class="dropdown">
+                      <button onclick="toggleDropdown(this)" class="dropbtn">
+                        Actions ▼
+                      </button>
+                      <div class="dropdown-content">
+                        <a href="#"><i class="fas fa-edit"></i> Edit</a>
+                        <a href="#"><i class="fas fa-trash-alt"></i> Delete</a>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="10" style="text-align: center">
+                    No donations found.
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      function toggleDropdown(btn) {
+        // Close all dropdowns first
+        document.querySelectorAll(".dropdown-content").forEach((menu) => {
+          if (menu !== btn.nextElementSibling) {
+            menu.style.display = "none";
+          }
+        });
+
+        // Toggle current dropdown
+        const dropdown = btn.nextElementSibling;
+        dropdown.style.display =
+          dropdown.style.display === "block" ? "none" : "block";
+      }
+
+      // Close if clicked outside
+      window.addEventListener("click", function (e) {
+        if (!e.target.matches(".dropbtn")) {
+          document.querySelectorAll(".dropdown-content").forEach((menu) => {
+            menu.style.display = "none";
+          });
+        }
+      });
+    </script>
+
+    <script src="{% static 'js/vindex.js' %}"></script>
+  </body>
+</html>
+
+{% endblock %}

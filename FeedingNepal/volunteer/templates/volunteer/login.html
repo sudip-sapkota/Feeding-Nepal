@@ -1,0 +1,144 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volunteer - Login</title>
+    <style>
+        /* Main Content Styles */
+        main {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 70px - 300px);
+            padding: 40px 0;
+        }
+
+        .login-container {
+            background-color: white;
+            padding: 30px;
+            width: 400px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+        }
+
+        .remember-me input {
+            margin-right: 5px;
+        }
+
+        .forgot-password {
+            color: blue;
+            text-decoration: none;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #5cff5c;
+            color: black;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .register-link a {
+            color: blue;
+            text-decoration: none;
+        }
+
+        /* For displaying messages */
+        .message {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+
+<main>
+    <div class="login-container">
+        <h2>Volunteer-Login</h2>
+
+        <!-- Display messages -->
+        {% comment %} {% for message in messages %}
+            <div class="message {% if message.tags == 'error' %}error{% else %}success{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %} {% endcomment %}
+
+        <form method="POST" action="{% url 'login_view' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="username" required> <!-- Changed username to email -->
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="form-options">
+                <div class="remember-me">
+                    <input type="checkbox" id="remember" name="remember">
+                    <label for="remember">Remember me</label>
+                </div>
+                <a href="#" class="forgot-password">Forgot Password?</a>
+            </div>
+            <button type="submit" class="login-btn">Login</button>
+            <p class="register-link">Don't have an account? <a href="{% url 'volunteer_register' %}">Register</a></p>
+        </form>
+    </div>
+</main>
+
+{% endblock %}

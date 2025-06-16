@@ -1,0 +1,146 @@
+<style>
+/* Sidebar Styles - UPDATED */
+.sidebar {
+    width: 100%;
+    margin-bottom: 24px;
+    padding: 0 20px; /* Added padding to center content */
+    background-color: #f9fafb; /* Light background to distinguish sidebar */
+    border-right: 1px solid #eaeaea; /* Border to separate from main content */
+}
+
+@media (min-width: 768px) {
+    .sidebar {
+        width: 280px; /* Increased width for more space */
+        margin-bottom: 0;
+        padding: 20px; /* Added padding all around */
+        min-height: calc(100vh - 60px); /* Make it full height */
+    }
+}
+
+.user-profile {
+    margin-bottom: 32px;
+    padding-top: 10px; /* Added top padding */
+}
+
+.user-profile h2 {
+    font-size: 1.25rem;
+    margin-bottom: 16px;
+    text-align: center; /* Center the title */
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0; /* Added vertical padding */
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    background-color: #000;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.user-details p:first-child {
+    font-weight: 600;
+}
+
+.user-details p:last-child {
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* Reduced gap for tighter menu */
+}
+
+.sidebar-nav a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 15px; /* Increased padding for better clickable area */
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.sidebar-nav a:hover {
+    background-color: #f3f4f6;
+}
+
+.sidebar-nav a.active {
+    background-color: #e6f7ef; /* Light green background */
+    color: #16a34a;
+    font-weight: 500;
+}
+
+.sidebar-nav .icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logout {
+    margin-top: 32px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #ef4444;
+    padding: 12px 15px; /* Match the nav items padding */
+}
+
+</style>
+<!-- Sidebar -->
+          <div class="sidebar">
+            <div class="user-info">
+              <div class="user-avatar">
+                <div class="avatar-circle">
+                  {{ user.full_name|slice:":1"|upper }}
+                </div>
+              </div>
+              <div class="user-details">
+                <p>{{ user.full_name }}</p>
+                <p>{{ user.email }}</p>
+              </div>
+            </div>
+
+            <nav class="sidebar-nav">
+              <a href="#" class="active">
+                <div class="icon">📊</div>
+                <span>Dashboard</span>
+              </a>
+              <a href="{% url 'food_available' %}">
+                <div class="icon">🍱</div>
+                <span>Food Available</span>
+              </a>
+
+              <a href="{% url 'donors_tracking' %}">
+                <div class="icon">👥</div>
+                <span>Donors Tracking</span>
+              </a>
+              <a href="{% url 'volunteer_inventory' %}">
+                <div class="icon">📦</div>
+                <span>Inventory</span>
+              </a>
+              <a href="#">
+                <div class="icon">📈</div>
+                <span>Analytic</span>
+              </a>
+              <a href="#">
+                <div class="icon">🔔</div>
+                <span>Notification</span>
+              </a>
+            </nav>
+
+            <a href="#" class="logout">
+              <span>🚪 Logout</span>
+            </a>
+          </div>

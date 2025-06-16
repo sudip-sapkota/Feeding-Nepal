@@ -1,0 +1,186 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Update Inventory</title>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+  <link rel="stylesheet" href="{% static 'css/astyle.css' %}" />
+  <style>
+    /* Popup overlay */
+    .popup-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    /* Popup box */
+    .popup-box {
+      background: #fff;
+      padding: 25px 30px;
+      border-radius: 8px;
+      width: 400px;
+      position: relative;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    /* Close button top right */
+    .popup-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      font-size: 20px;
+      cursor: pointer;
+      color: #888;
+      transition: color 0.3s ease;
+    }
+    .popup-close:hover {
+      color: #333;
+    }
+    /* Form fields */
+    form label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: #444;
+    }
+    form input[type="text"],
+    form input[type="number"],
+    form input[type="date"],
+    form select {
+      width: 100%;
+      padding: 8px 10px;
+      margin-bottom: 18px;
+      border: 1.5px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+      transition: border-color 0.3s ease;
+    }
+    form input[type="text"]:focus,
+    form input[type="number"]:focus,
+    form input[type="date"]:focus,
+    form select:focus {
+      border-color: #28a745;
+      outline: none;
+    }
+    /* Submit button */
+    .btn-submit {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.3s ease;
+    }
+    .btn-submit:hover {
+      background-color: #218838;
+    }
+  </style>
+</head>
+<body>
+  <div class="popup-overlay" id="popupOverlay">
+    <div class="popup-box">
+      <i class="fas fa-times popup-close" id="popupClose"></i>
+      <h2>Add Inventory Item</h2>
+      <form method="POST" action="{% url 'update_inventory' %}" id="updateInventoryForm">
+        {% csrf_token %}
+
+        <label for="food_type">Food Type</label>
+        <select name="food_type" id="food_type" required>
+          <option value="" disabled selected>Select Food Type</option>
+          <option value="Fresh Produce">Fresh Produce</option>
+          <option value="Dairy">Dairy</option>
+          <option value="Bakery">Bakery</option>
+          <option value="Canned Goods">Canned Goods</option>
+          <option value="Junk Food">Junk Food</option>
+        </select>
+
+        <label for="quantity">Quantity</label>
+        <input
+          type="number"
+          name="quantity"
+          id="quantity"
+          min="1"
+          required
+        />
+
+        <label for="storage_type">Storage Type</label>
+        <input
+          type="text"
+          name="storage_type"
+          id="storage_type"
+          placeholder="E.g., Refrigerated, Room Temp"
+        />
+
+        <label for="packaging_type">Packaging Type</label>
+        <input
+          type="text"
+          name="packaging_type"
+          id="packaging_type"
+          placeholder="E.g., Box, Bag, Bottle"
+        />
+
+        <label for="expiry_date">Expiry Date</label>
+        <input
+          type="date"
+          name="expiry_date"
+          id="expiry_date"
+        />
+
+        <button type="submit" class="btn-submit">Add Item</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Close popup on clicking X
+    document.getElementById('popupClose').addEventListener('click', function () {
+      window.history.back();
+    });
+
+    // Auto update expiry date based on food type
+    const foodTypeSelect = document.getElementById('food_type');
+    const expiryDateInput = document.getElementById('expiry_date');
+
+    foodTypeSelect.addEventListener('change', () => {
+      const today = new Date();
+      let expiryDays = 7; // default 7 days
+
+      switch(foodTypeSelect.value) {
+        case 'Fresh Produce':
+          expiryDays = 5;
+          break;
+        case 'Dairy':
+          expiryDays = 10;
+          break;
+        case 'Bakery':
+          expiryDays = 3;
+          break;
+        case 'Canned Goods':
+          expiryDays = 365;
+          break;
+        case 'Junk Food':
+          expiryDays = 180;
+          break;
+        default:
+          expiryDays = 7;
+      }
+
+      today.setDate(today.getDate() + expiryDays);
+      const yyyy = today.getFullYear();
+      const mm = String(today.getMonth() + 1).padStart(2, '0');
+      const dd = String(today.getDate()).padStart(2, '0');
+      expiryDateInput.value = `${yyyy}-${mm}-${dd}`;
+    });
+  </script>
+</body>
+</html>

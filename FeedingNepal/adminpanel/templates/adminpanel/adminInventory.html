@@ -1,0 +1,207 @@
+{% extends "layout.html" %} {% load static %} {% block content %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Feeding Nepal - Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="{% static 'css/astyle.css' %}" />
+    <style></style>
+  </head>
+  <body>
+    <!-- Sidebar and Main Content -->
+    <div class="content-wrapper">
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="sidebar-header">
+          <img
+            src="/placeholder.svg"
+            alt="Feeding Nepal Logo"
+            class="sidebar-logo"
+          />
+          <span>Feeding Nepal</span>
+          <div class="sidebar-badge">2</div>
+        </div>
+
+        <ul class="sidebar-menu">
+          <li>
+            <a href="{% url 'admin_index' %}">
+              <i class="fas fa-chart-line"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'admin_donors' %}">
+              <i class="fas fa-users"></i>
+              <span>Donors</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'admin_volunteers' %}">
+              <i class="fas fa-hands-helping"></i>
+              <span>Volunteers</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'admin_donations' %}">
+              <i class="fas fa-boxes"></i>
+              <span>Donations</span>
+            </a>
+          </li>
+          <li class="active">
+            <a href="{% url 'admin_inventory' %}">
+              <i class="fas fa-warehouse"></i>
+              <span>Inventory</span>
+            </a>
+          </li>
+      
+          <li>
+            <a href="{% url 'admin_analytics' %}">
+              <i class="fas fa-chart-pie"></i>
+              <span>Analytics</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'admin_reports' %}">
+              <i class="fas fa-file-alt"></i>
+              <span>Reports</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'admin_notifications' %}">
+              <i class="fas fa-bell"></i>
+              <span>Notifications</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'admin_logout' %}">
+              <i class="fas fa-sign-out-alt"></i>
+              <span>Logout</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <h1 class="dashboard-title">Inventory Management</h1>
+        <a
+          href="{% url 'add_data' %}"
+          style="
+            padding: 10px 20px;
+            color: #fff;
+            background-color: #007bff;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+          "
+          onmouseover="this.style.backgroundColor='#28a745';"
+          onmouseout="this.style.backgroundColor='#007BFF';"
+        >
+          Add
+        </a>
+
+        <div class="tables-container">
+          <div class="table-section full-width">
+            <h3>Inventory List</h3>
+            <input
+              type="text"
+              placeholder="Search inventory..."
+              style="
+                padding: 8px;
+                margin-bottom: 15px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                float: right;
+                width: 200px;
+              "
+            />
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Food ID</th>
+                  <th>Food Type</th>
+                  <th>Quantity</th>
+                  <th>Storage Type</th>
+                  <th>Packaging Type</th>
+                  <th>Expiry Date</th>
+                  <th>Created At</th>
+                  <th>Updated At</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="inventoryTableBody">
+                {% for item in inventory %}
+                <tr>
+                  <td>{{ item.id }}</td>
+                  <td>{{ item.food_type }}</td>
+                  <td>{{ item.quantity }}</td>
+                  <td>{{ item.storage_type|default:"N/A" }}</td>
+                  <td>{{ item.packaging_type|default:"N/A" }}</td>
+                  <td>
+                    {% if item.expiry_date %}{{ item.expiry_date|date:"Y-m-d"
+                    }}{% else %}N/A{% endif %}
+                  </td>
+                  <td>{{ item.created_at|date:"Y-m-d H:i" }}</td>
+                  <td>{{ item.updated_at|date:"Y-m-d H:i" }}</td>
+                  <td>
+                    <div class="dropdown">
+                      <button onclick="toggleDropdown(this)" class="dropbtn">
+                        Actions ▼
+                      </button>
+                      <div class="dropdown-content">
+                        <a href="#"><i class="fas fa-edit"></i> Edit</a>
+                        <a href="#"><i class="fas fa-trash-alt"></i> Delete</a>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="9" style="text-align: center">
+                    No inventory items found.
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      function toggleDropdown(btn) {
+        // Close all dropdowns first
+        document.querySelectorAll(".dropdown-content").forEach((menu) => {
+          if (menu !== btn.nextElementSibling) {
+            menu.style.display = "none";
+          }
+        });
+
+        // Toggle current dropdown
+        const dropdown = btn.nextElementSibling;
+        dropdown.style.display =
+          dropdown.style.display === "block" ? "none" : "block";
+      }
+
+      // Close if clicked outside
+      window.addEventListener("click", function (e) {
+        if (!e.target.matches(".dropbtn")) {
+          document.querySelectorAll(".dropdown-content").forEach((menu) => {
+            menu.style.display = "none";
+          });
+        }
+      });
+    </script>
+
+    <script src="{% static 'js/vindex.js' %}"></script>
+  </body>
+</html>
+{% endblock %}

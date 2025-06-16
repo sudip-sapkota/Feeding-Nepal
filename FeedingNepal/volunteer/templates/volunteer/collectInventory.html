@@ -1,0 +1,67 @@
+{% extends "layout.html" %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Volunteer - Collected Inventory</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="{% static 'css/astyle.css' %}" />
+  </head>
+  <body>
+    <div class="content-wrapper">
+      <!-- Sidebar -->
+      {% include 'volunteer/volunteerSidebar.html' %}
+
+      <div class="tables-container">
+        <div class="table-section full-width">
+          <h2 style="margin-bottom: 20px;">Collected Inventory</h2>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Food ID</th>
+                <th>Food Type</th>
+                <th>Quantity</th>
+                <th>Storage Type</th>
+                <th>Packaging Type</th>
+                <th>Expiry Date</th>
+                <th>Collected At</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in collected_items %}
+              <tr>
+                <td>{{ item.id }}</td>
+                <td>{{ item.food_type }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.storage_type|default:"N/A" }}</td>
+                <td>{{ item.packaging_type|default:"N/A" }}</td>
+                <td>
+                  {% if item.expiry_date %}
+                    {{ item.expiry_date|date:"Y-m-d" }}
+                  {% else %}
+                    N/A
+                  {% endif %}
+                </td>
+                <td>{{ item.updated_at|date:"Y-m-d H:i" }}</td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="7" style="text-align: center;">
+                  No items collected.
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+{% endblock %}

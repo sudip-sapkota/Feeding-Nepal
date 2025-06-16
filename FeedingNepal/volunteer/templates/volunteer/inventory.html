@@ -1,0 +1,108 @@
+{% extends "layout.html" %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Volunteer - Inventory</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="{% static 'css/astyle.css' %}" />
+  </head>
+  <body>
+    <div class="content-wrapper">
+      <!-- Sidebar -->
+      {% include 'volunteer/volunteerSidebar.html' %}
+
+      <div class="tables-container">
+        <div class="table-section full-width">
+          <input
+            type="text"
+            placeholder="Search inventory..."
+            style="
+              padding: 8px;
+              margin-bottom: 15px;
+              border: 1px solid #ddd;
+              border-radius: 4px;
+              float: right;
+              width: 200px;
+            "
+          />
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Food ID</th>
+                <th>Food Type</th>
+                <th>Quantity</th>
+                <th>Storage Type</th>
+                <th>Packaging Type</th>
+                <th>Expiry Date</th>
+                <th>Created At</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="inventoryTableBody">
+              {% for item in inventory %}
+              <tr>
+                <td>{{ item.id }}</td>
+                <td>{{ item.food_type }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.storage_type|default:"N/A" }}</td>
+                <td>{{ item.packaging_type|default:"N/A" }}</td>
+                <td>
+                  {% if item.expiry_date %}
+                    {{ item.expiry_date|date:"Y-m-d" }}
+                  {% else %}
+                    N/A
+                  {% endif %}
+                </td>
+                <td>{{ item.created_at|date:"Y-m-d H:i" }}</td>
+                <td>
+                  {% if item.collect == "no" %}
+                  <form
+                    method="POST"
+                    action="{% url 'collect_inventory' item.id %}"
+                    style="display:inline;"
+                  >
+                    {% csrf_token %}
+                    <button
+                      type="submit"
+                      style="
+                        background-color: #007bff;
+                        color: white;
+                        padding: 6px 12px;
+                        border: none;
+                        border-radius: 4px;
+                        cursor: pointer;
+                        font-size: 14px;
+                      "
+                      onmouseover="this.style.backgroundColor='#0056b3'"
+                      onmouseout="this.style.backgroundColor='#007bff'"
+                    >
+                      Collect
+                    </button>
+                  </form>
+                  {% else %}
+                  <span style="color: green; font-weight: bold;">Collected</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="8" style="text-align: center">
+                  No inventory items found.
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+{% endblock %}

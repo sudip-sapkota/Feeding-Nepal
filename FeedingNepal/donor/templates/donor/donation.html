@@ -1,0 +1,192 @@
+{% extends "layout.html" %}
+{%load static%}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feeding Nepal - Donate Food</title>
+    <link rel="stylesheet" href="{% static 'css/donation.css' %}">
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="user-info">
+            <div class="user-avatar">
+                {{ donor.name|slice:":1"|upper }}
+            </div>
+            <div>
+                <div class="user-name">{{ donor.name }}</div>
+                <div class="user-email">{{ donor.email }}</div>
+            </div>
+        </div>
+    
+        <a href="#" class="menu-item active">
+            <i>📊</i> Dashboard
+        </a>
+    
+        <a href="{% url 'make_donation' %}" class="menu-item">
+            <i>💰</i> Make Donation
+        </a>
+      
+        
+    
+            <a href="{% url 'volunteers_tracking' %}" class="menu-item">
+    <i>👥</i> Volunteers Tracking
+</a>
+
+<a href="{% url 'inventory' %}" class="menu-item">
+    <i>📦</i> Inventory
+</a>
+
+<a href="{% url 'analytic' %}" class="menu-item">
+    <i>📈</i> Analytic
+</a>
+
+<a href="{% url 'notification' %}" class="menu-item">
+    <i>🔔</i> Notification
+</a>
+
+<div class="dashboard-separator"></div>
+
+<a href="{% url 'logout' %}" class="menu-item logout">
+    <i>🚪</i> Logout
+</a>
+        <style>
+
+    
+        </style>
+    </div>
+    <!-- Main Content -->
+    <main>
+        <div class="container">
+            <div class="dashboard-container">
+                <!-- Sidebar -->
+                
+
+                <!-- Main Dashboard Content -->
+                <div class="dashboard-content">
+                    <div class="dashboard-header">
+                        <h1 class="dashboard-title">Welcome to Donor Dashboard</h1>
+                        <div class="search-box">
+                            <input type="text" class="search-input" placeholder="Search...">
+                            <button class="search-button">→</button>
+                        </div>
+                    </div>
+
+                    <!-- Donation Form -->
+                    <div class="donation-form-container">
+                        <h2 class="donation-form-title">Donate Food</h2>
+                        <form id="donationForm" method="POST" action="{% url 'make_donation' %}">
+                            {% csrf_token %}
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="quantity">Quantity:</label>
+                                    <input type="text" name="quantity" id="quantity" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="foodType">Type of Food:</label>
+                                    <select name="food_type" id="foodType" class="form-control" onchange="setExpiryDate()">
+                                        <option value="">Select Food Type</option>
+                                        <option value="Junk Food">Junk Food</option>
+                                        <option value="Homemade Food">Homemade Food</option>
+                                        <option value="Canned Food">Canned Food</option>
+                                        <option value="Bakery Items">Bakery Items</option>
+                                        <option value="Fruits & Vegetables">Fruits & Vegetables</option>
+                                    </select>
+                                </div>
+                            </div>
+                        
+                            <div class="form-group">
+                                <label for="description">Food Description:</label>
+                                <textarea name="description" id="description" class="form-control"></textarea>
+                            </div>
+                        
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="pickupDate">Pickup Date:</label>
+                                    <input type="date" name="pickup_date" id="pickupDate" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="pickupTime">Pickup Time:</label>
+                                    <input type="time" name="pickup_time" id="pickupTime" class="form-control">
+                                </div>
+                            </div>
+                        
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="storageType">Storage Type:</label>
+                                    <select name="storage_type" id="storageType" class="form-control">
+                                        <option value="">Select Storage Type</option>
+                                        <option value="Refrigerated">Refrigerated</option>
+                                        <option value="Frozen">Frozen</option>
+                                        <option value="Room Temperature">Room Temperature</option>
+                                        <option value="Dry Storage">Dry Storage</option>
+                                        <option value="Cool & Dark">Cool & Dark</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="packagingType">Packaging Type:</label>
+                                    <select name="packaging_type" id="packagingType" class="form-control">
+                                        <option value="">Select Packaging Type</option>
+                                        <option value="Plastic Container">Plastic Container</option>
+                                        <option value="Cardboard Box">Cardboard Box</option>
+                                        <option value="Aluminum Foil">Aluminum Foil</option>
+                                        <option value="Glass Jar">Glass Jar</option>
+                                        <option value="Vacuum Sealed">Vacuum Sealed</option>
+                                    </select>
+                                </div>
+                            </div>
+                        
+                            <div class="form-group">
+                                <label for="expiryDate">Expiry Date:</label>
+                                <input type="date" name="expiry_date" id="expiryDate" class="form-control" readonly>
+                            </div>
+                        
+                            <button type="submit" class="submit-btn">Submit Donation</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="{% static 'js/script.js' %}"></script>
+    <script>
+        function setExpiryDate() {
+            const foodType = document.getElementById('foodType').value;
+            const expiryInput = document.getElementById('expiryDate');
+            const today = new Date();
+        
+            let expiryDate;
+        
+            switch (foodType) {
+                case 'Junk Food':
+                    expiryDate = new Date(today.setDate(today.getDate() + 7));
+                    break;
+                case 'Homemade Food':
+                    expiryDate = new Date(today.setDate(today.getDate() + 2));
+                    break;
+                case 'Canned Food':
+                    expiryDate = new Date(today.setMonth(today.getMonth() + 6));
+                    break;
+                case 'Bakery Items':
+                    expiryDate = new Date(today.setDate(today.getDate() + 3));
+                    break;
+                case 'Fruits & Vegetables':
+                    expiryDate = new Date(today.setDate(today.getDate() + 5));
+                    break;
+                default:
+                    expiryDate = '';
+            }
+        
+            if (expiryDate) {
+                expiryInput.value = expiryDate.toISOString().split('T')[0];
+            } else {
+                expiryInput.value = '';
+            }
+        }
+</script>
+</body>
+</html>
+{% endblock %}

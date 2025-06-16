@@ -1,0 +1,107 @@
+{% extends "layout.html" %} {%load static%} {% block content %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Feeding Nepal - Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="{% static 'css/astyle.css' %}" />
+    <style></style>
+  </head>
+  <body>
+{% include 'adminpanel/adminSidebar.html' %}
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <h1 class="dashboard-title">Volunteers Management</h1>
+        <button class="btn-update">Update</button>
+        <div class="tables-container">
+          <div class="table-section full-width">
+            <h3>Volunteers List</h3>
+            <input
+              type="text"
+              placeholder="Search Volunteers..."
+              style="
+                padding: 8px;
+                margin-bottom: 15px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                float: right;
+                width: 200px;
+              "
+            />
+            {{volunteer_data}}
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Contact</th>
+                  <th>total collected food</th>
+                  <th>Location</th>
+                  <th>Emergency Contact</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="donorsTableBody">
+                {% for volunteer in volunteer_data %}
+                <tr>
+                  <td>{{ volunteer.full_name }}</td>
+                  <td>
+                    <span>{{ volunteer.email }}</span><br />
+                    <span>{{ volunteer.mobile }}</span>
+                  </td>
+                  <td>
+                    <!-- No total_collected in DB, so leave empty or add later -->
+                  </td>
+                  <td>{{ volunteer.city }}</td>
+                  <td>{{ volunteer.emergency_contact }}</td>
+                  <td>
+                    <!-- You can add action buttons like Edit/Delete here -->
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="6">No volunteer data found.</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      function toggleDropdown(btn) {
+        // Close all dropdowns first
+        document.querySelectorAll(".dropdown-content").forEach((menu) => {
+          if (menu !== btn.nextElementSibling) {
+            menu.style.display = "none";
+          }
+        });
+
+        // Toggle current dropdown
+        const dropdown = btn.nextElementSibling;
+        dropdown.style.display =
+          dropdown.style.display === "block" ? "none" : "block";
+      }
+
+      // Close if clicked outside
+      window.addEventListener("click", function (e) {
+        if (!e.target.matches(".dropbtn")) {
+          document.querySelectorAll(".dropdown-content").forEach((menu) => {
+            menu.style.display = "none";
+          });
+        }
+      });
+    </script>
+
+    <script src="{% static 'js/vindex.js' %}"></script>
+  </body>
+</html>
+
+{% endblock %}

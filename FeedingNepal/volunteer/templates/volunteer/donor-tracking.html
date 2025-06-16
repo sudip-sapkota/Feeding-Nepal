@@ -1,0 +1,260 @@
+{% extends "layout.html" %} {%load static%} {% block content %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Feeding Nepal - Volunteer Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/vindex.css' %}" />
+    <style>
+      /* Main Container */
+      .container {
+        display: flex;
+        min-height: calc(100vh - 60px);
+      }
+
+      /* Main Content */
+      .main-content {
+        flex: 1;
+        padding: 20px;
+      }
+
+      .content-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .content-title {
+        font-size: 24px;
+        font-weight: bold;
+      }
+
+      .search-container {
+        display: flex;
+        gap: 10px;
+      }
+
+      .search-input {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        width: 200px;
+      }
+
+      .search-btn {
+        background-color: #28a745;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      /* Donor List Section */
+      .donor-section {
+        background-color: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .section-title {
+        font-size: 18px;
+        font-weight: bold;
+      }
+
+      .view-all {
+        color: #007bff;
+        text-decoration: none;
+        font-size: 14px;
+      }
+
+      /* Table Styles */
+      .donor-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .donor-table th {
+        background-color: #17a2b8;
+        color: white;
+        padding: 12px;
+        text-align: left;
+        font-weight: bold;
+      }
+
+      .donor-table td {
+        padding: 12px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .donor-table tr:hover {
+        background-color: #f8f9fa;
+      }
+
+      .status-badge {
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: bold;
+      }
+
+      .status-active {
+        background-color: #28a745;
+        color: white;
+      }
+
+      .action-btn {
+        background-color: #28a745;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        margin-right: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Main Container -->
+    <div class="container">
+      <!-- Sidebar -->
+{% include 'volunteer/volunteerSidebar.html' %}
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <div class="content-header">
+          <h1 class="content-title">Welcome to volunteer Dashboard</h1>
+          <div class="search-container">
+            <input type="text" class="search-input" placeholder="Search..." />
+            <button class="search-btn">🔍</button>
+          </div>
+        </div>
+
+        <!-- Donor List Section -->
+        <div class="donor-section">
+          <div class="section-header">
+            <h2 class="section-title">Donor List</h2>
+            <a href="#" class="view-all">View All</a>
+          </div>
+          <table class="donor-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Donor</th>
+                <th>Location</th>
+                <th>City</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for donor in donors %}
+              <tr>
+                <td>{{ donor.id }}</td>
+                <td>{{ donor.name }}</td>
+                <td>{{ donor.city }}</td>
+                <td>{{ donor.address }}</td>
+                <td>Active🟢</td>
+                <td>
+                  <a href="tel:{{ donor.phone }}" class="action-btn">Call</a>
+                  <a href="{% url 'send_message' donor.id %}" class="action-btn">Message</a>
+                  <a href="{% url 'donor_report' donor.id %}" class="action-btn" target="_blank">Report</a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+
+    <!-- Footer -->
+
+    <script>
+      // Search functionality
+      document
+        .querySelector(".search-btn")
+        .addEventListener("click", function () {
+          const searchTerm = document.querySelector(".search-input").value;
+          if (searchTerm) {
+            alert("Searching for: " + searchTerm);
+          }
+        });
+
+      // Search on Enter key
+      document
+        .querySelector(".search-input")
+        .addEventListener("keypress", function (e) {
+          if (e.key === "Enter") {
+            const searchTerm = this.value;
+            if (searchTerm) {
+              alert("Searching for: " + searchTerm);
+            }
+          }
+        });
+
+      // Sidebar menu interactions
+      document.querySelectorAll(".sidebar-menu a").forEach((link) => {
+        link.addEventListener("click", function (e) {
+          e.preventDefault();
+
+          // Remove active class from all links
+          document
+            .querySelectorAll(".sidebar-menu a")
+            .forEach((l) => l.classList.remove("active"));
+
+          // Add active class to clicked link
+          this.classList.add("active");
+
+          // Handle logout
+          if (this.classList.contains("logout")) {
+            if (confirm("Are you sure you want to logout?")) {
+              alert("Logging out...");
+            }
+          }
+        });
+      });
+
+      // Action buttons functionality
+      document.querySelectorAll(".action-btn").forEach((btn) => {
+        btn.addEventListener("click", function () {
+          const action = this.textContent;
+          const row = this.closest("tr");
+          const donor = row.cells[1].textContent;
+
+          if (action === "Call") {
+            alert(`Calling ${donor}...`);
+          } else if (action === "Message") {
+            alert(`Messaging ${donor}...`);
+          }
+        });
+      });
+
+      // Newsletter subscription
+      document
+        .querySelector(".newsletter-btn")
+        .addEventListener("click", function () {
+          const email = document.querySelector(".newsletter-input").value;
+          if (email) {
+            alert("Thank you for subscribing with email: " + email);
+            document.querySelector(".newsletter-input").value = "";
+          } else {
+            alert("Please enter a valid email address");
+          }
+        });
+    </script>
+  </body>
+</html>
+{% endblock %}

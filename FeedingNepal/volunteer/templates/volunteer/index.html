@@ -1,0 +1,141 @@
+{% extends "layout.html" %} {%load static%} {% block content %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Feeding Nepal - Volunteer Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/vindex.css' %}" />
+    <style></style>
+  </head>
+  <body>
+    <!-- Main Content -->
+    <main>
+      <div class="container">
+        <div class="dashboard-container">
+          {% include 'volunteer/volunteerSidebar.html' %}
+          <!-- Main Dashboard Content -->
+          <div class="dashboard-content">
+            <div class="dashboard-header">
+              <h1 class="dashboard-title">Welcome to Volunteer Dashboard</h1>
+              <div class="search-box">
+                <input
+                  type="text"
+                  class="search-input"
+                  placeholder="Search..."
+                />
+                <button class="search-button">
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="18"
+                    height="18"
+                    stroke="currentColor"
+                    fill="none"
+                  >
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="filters">
+              <div class="filter-group">
+                <label>Date Range:</label>
+                <div class="dropdown" id="dateDropdown">
+                  <button class="dropdown-button">
+                    <span id="dateValue">This Month</span>
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="16"
+                      height="16"
+                      stroke="currentColor"
+                      fill="none"
+                    >
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </button>
+                  <div class="dropdown-menu" id="dateMenu">
+                    <div class="dropdown-item" data-value="This Month">
+                      This Month
+                    </div>
+                    <div class="dropdown-item" data-value="Last Month">
+                      Last Month
+                    </div>
+                    <div class="dropdown-item" data-value="Last 3 Months">
+                      Last 3 Months
+                    </div>
+                    <div class="dropdown-item" data-value="This Year">
+                      This Year
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="filter-group">
+                <label>Location:</label>
+                <div class="dropdown" id="locationDropdown">
+                  <button class="dropdown-button">
+                    <span id="locationValue">All Location</span>
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="16"
+                      height="16"
+                      stroke="currentColor"
+                      fill="none"
+                    >
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </button>
+                  <div class="dropdown-menu" id="locationMenu">
+                    <div class="dropdown-item" data-value="All Location">
+                      All Location
+                    </div>
+                    <div class="dropdown-item" data-value="Kathmandu">
+                      Kathmandu
+                    </div>
+                    <div class="dropdown-item" data-value="Pokhara">
+                      Pokhara
+                    </div>
+                    <div class="dropdown-item" data-value="Chitwan">
+                      Chitwan
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-label">total collect</div>
+                <div class="stat-value green">1,243 kg</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Beneficiaries</div>
+                <div class="stat-value blue">78</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Distribution Events</div>
+                <div class="stat-value purple">24</div>
+              </div>
+            </div>
+
+            <!-- Background Image Section -->
+            <div class="bg-image-section">
+              <div class="bg-overlay"></div>
+              <div class="bg-content">
+                <h3 class="bg-title">Every act of kindness inspires another</h3>
+
+                <p>Your time and effort truly make a difference.</p>
+                <p>Keep spreading kindness—your impact grows with every act!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script></script>
+  </body>
+</html>
+<script src="{% static 'js/vindex.js' %}"></script>
+{% endblock %}

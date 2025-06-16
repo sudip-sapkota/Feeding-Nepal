@@ -1,0 +1,245 @@
+{% extends "layout.html" %} {%load static%} {% block content %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Feeding Nepal - Volunteer Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/vindex.css' %}" />
+    <style></style>
+  </head>
+  <body>
+    <!-- Main Content -->
+    <main>
+      <div class="container">
+        <div class="dashboard-container">
+          <!-- Sidebar -->
+          {% include 'volunteer/volunteerSidebar.html' %}
+
+          <!-- Main Dashboard Content -->
+          <div class="dashboard-content">
+            <div class="dashboard-header">
+              <h1 class="dashboard-title">Welcome to Volunteer Dashboard</h1>
+              <div class="search-box">
+                <input
+                  type="text"
+                  class="search-input"
+                  placeholder="Search..."
+                />
+                <button class="search-button">
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="18"
+                    height="18"
+                    stroke="currentColor"
+                    fill="none"
+                  >
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="filters">
+              <div class="filter-group">
+                <label>Date Range:</label>
+                <div class="dropdown" id="dateDropdown">
+                  <button class="dropdown-button">
+                    <span id="dateValue">This Month</span>
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="16"
+                      height="16"
+                      stroke="currentColor"
+                      fill="none"
+                    >
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </button>
+                  <div class="dropdown-menu" id="dateMenu">
+                    <div class="dropdown-item" data-value="This Month">
+                      This Month
+                    </div>
+                    <div class="dropdown-item" data-value="Last Month">
+                      Last Month
+                    </div>
+                    <div class="dropdown-item" data-value="Last 3 Months">
+                      Last 3 Months
+                    </div>
+                    <div class="dropdown-item" data-value="This Year">
+                      This Year
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="filter-group">
+                <label>Location:</label>
+                <div class="dropdown" id="locationDropdown">
+                  <button class="dropdown-button">
+                    <span id="locationValue">All Location</span>
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="16"
+                      height="16"
+                      stroke="currentColor"
+                      fill="none"
+                    >
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </button>
+                  <div class="dropdown-menu" id="locationMenu">
+                    <div class="dropdown-item" data-value="All Location">
+                      All Location
+                    </div>
+                    <div class="dropdown-item" data-value="Kathmandu">
+                      Kathmandu
+                    </div>
+                    <div class="dropdown-item" data-value="Pokhara">
+                      Pokhara
+                    </div>
+                    <div class="dropdown-item" data-value="Chitwan">
+                      Chitwan
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-label">total collect</div>
+                <div class="stat-value green">1,243 kg</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Beneficiaries</div>
+                <div class="stat-value blue">78</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Distribution Events</div>
+                <div class="stat-value purple">24</div>
+              </div>
+            </div>
+
+            {% comment %} food available {% endcomment %}
+            {% for donation in donations %}
+            <div class="donation-box">
+              <div class="donation-grid">
+                <div class="donation-item">
+                  <strong>Donor ID:</strong> {{ donation.donor_id }}
+                </div>
+                <div class="donation-item">
+                  <strong>Storage type:</strong> {{ donation.storage_type }}
+                </div>
+                <div class="donation-item">
+                  <strong>Quantity:</strong> {{ donation.quantity }}
+                </div>
+                <div class="donation-item">
+                  <strong>Packing type:</strong> {{ donation.packaging_type }}
+                </div>
+                <div class="donation-item">
+                  <strong>Food Type:</strong> {{ donation.food_type }}
+                </div>
+                <div class="donation-description">
+                  <strong>Description:</strong> {{ donation.description }}
+                </div>
+              </div>
+              <div class="donation-dates">
+                <div>
+                  <div class="pickup-date">Pickup date: {{ donation.pickup_date }}</div>
+                  <div class="pickup-date">Pickup time: {{ donation.pickup_time }}</div>
+                </div>
+                <div class="exp-date">Exp date: {{ donation.expiry_date }}</div>
+                <button class="accept-btn">Accept</button>
+              </div>
+            </div>
+            {% endfor %}
+            
+          </div>
+        </div>
+      </div>
+    </main>
+    <style>
+      /* General container for donation box */
+      .donation-box {
+        background-color: #f9f9f9;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        margin: 20px auto;
+        width: 100%;
+        max-width: 1000px;
+      }
+
+      /* Grid container for items inside donation box */
+      .donation-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      /* Styling for each donation item */
+      .donation-item {
+        font-size: 16px;
+        font-weight: normal;
+        color: #333;
+      }
+
+      /* Donation description */
+      .donation-description {
+        grid-column: span 2;
+        font-size: 14px;
+        color: #555;
+        margin-top: 10px;
+      }
+
+      /* Styling for dates and times */
+      .donation-dates {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+      }
+
+      /* Red color for dates and times */
+      .pickup-date,
+      .exp-date {
+        color: red;
+        font-weight: bold;
+      }
+
+      /* Button styling */
+      .accept-btn {
+        background-color: #4caf50;
+        color: white;
+        font-size: 16px;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      /* Button hover effect */
+      .accept-btn:hover {
+        background-color: #45a049;
+      }
+
+      /* Responsive design */
+      @media (max-width: 600px) {
+        .donation-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .donation-dates {
+          flex-direction: column;
+          text-align: center;
+        }
+      }
+    </style>
+    <script></script>
+  </body>
+</html>
+<script src="{% static 'js/vindex.js' %}"></script>
+{% endblock %}

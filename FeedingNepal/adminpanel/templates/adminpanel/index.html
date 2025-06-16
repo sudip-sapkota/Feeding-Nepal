@@ -1,0 +1,324 @@
+{% extends "layout.html" %}
+{%load static%}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feeding Nepal - Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/astyle.css' %}">
+<style>
+
+    
+</style>
+</head>
+<body>
+    
+      
+{% include 'adminpanel/adminSidebar.html' %}
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <h1 class="dashboard-title">Dashboard Overview</h1>
+                
+                <!-- Stats Cards -->
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <div class="stat-icon green">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h2>142</h2>
+                            <p>Total Donors</p>
+                            <small><i class="fas fa-arrow-up"></i> 12% from last month</small>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon blue">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h2>38</h2>
+                            <p>Active Volunteers</p>
+                            <small><i class="fas fa-arrow-up"></i> 8% from last month</small>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon green">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h2>287</h2>
+                            <p>Total Food Items</p>
+                            <small><i class="fas fa-arrow-up"></i> 15% from last month</small>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon orange">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h2>24</h2>
+                            <p>Items Expired</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tables Section -->
+                <div class="tables-container">
+    <!-- Recent Donations Table -->
+<div class="tables-container">
+    <!-- Recent Donations Table -->
+    <div class="table-section">
+        <h3>Recent Donations</h3>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Donor</th>
+                    <th>Email</th>
+                    <th>Contact</th>
+                    <th>Location</th>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for donation in recent_donations %}
+                <tr>
+                    <td>{{ donation.donor.name }}</td>
+                    <td>{{ donation.donor.email }}</td>
+                    <td>{{ donation.donor.phone }}</td>
+                    <td>{{ donation.donor.city }}</td>
+                    <td>{{ donation.food_type }}</td>
+                    <td>{{ donation.quantity }}</td>
+                    <td>
+                        {% if donation.volunteer %}
+                            <span class="status-badge green">Received</span>
+                        {% else %}
+                            <span class="status-badge yellow">Pending</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7">No recent donations found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+                    
+                    <!-- Pending Volunteer Approvals -->
+                    <div class="table-section">
+                        <h3>Pending Volunteer Approvals</h3>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Applied On</th>
+                                    <th>Health Check</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Nabin Tamang</td>
+                                    <td>2023-06-18</td>
+                                    <td><span class="status-badge green">Passed</span></td>
+                                    <td class="action-buttons">
+                                        <button class="btn-approve"><i class="fas fa-check"></i></button>
+                                        <button class="btn-reject"><i class="fas fa-times"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Anita Limbu</td>
+                                    <td>2023-06-20</td>
+                                    <td><span class="status-badge green">Passed</span></td>
+                                    <td class="action-buttons">
+                                        <button class="btn-approve"><i class="fas fa-check"></i></button>
+                                        <button class="btn-reject"><i class="fas fa-times"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Nirmal K.C.</td>
+                                    <td>2023-06-22</td>
+                                    <td><span class="status-badge green">Passed</span></td>
+                                    <td class="action-buttons">
+                                        <button class="btn-approve"><i class="fas fa-check"></i></button>
+                                        <button class="btn-reject"><i class="fas fa-times"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Items Expiring Soon -->
+                <div class="table-section full-width">
+    <h3>Items Expiring Soon</h3>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Expiry Date</th>
+                <th>Days Left</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in expiring_soon_items %}
+            <tr>
+                <td>{{ item.food_type }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.expiry_date|date:"Y-m-d" }}</td>
+                <td>
+                    {% with days_left=item.days_left %}
+                        <span class="status-badge 
+                            {% if days_left <= 3 %}
+                                red
+                            {% elif days_left <= 7 %}
+                                yellow
+                            {% else %}
+                                blue
+                            {% endif %}">
+                            {{ days_left }}
+                        </span>
+                    {% endwith %}
+                </td>
+                <td>
+                    <button class="btn-distribute">Distribute</button>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">No expiring items found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+        
+        
+    
+
+    <script>
+        // Add interactivity to the dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sidebar toggle functionality
+            const sidebarItems = document.querySelectorAll('.sidebar-menu li');
+            
+            sidebarItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    // Remove active class from all items
+                    sidebarItems.forEach(i => i.classList.remove('active'));
+                    // Add active class to clicked item
+                    this.classList.add('active');
+                });
+            });
+            
+            // Approve/Reject buttons functionality
+            const approveButtons = document.querySelectorAll('.btn-approve');
+            const rejectButtons = document.querySelectorAll('.btn-reject');
+            
+            approveButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const row = this.closest('tr');
+                    row.style.backgroundColor = '#e8f5e9';
+                    setTimeout(() => {
+                        row.remove();
+                    }, 500);
+                });
+            });
+            
+            rejectButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const row = this.closest('tr');
+                    row.style.backgroundColor = '#ffebee';
+                    setTimeout(() => {
+                        row.remove();
+                    }, 500);
+                });
+            });
+            
+            // Distribute button functionality
+            const distributeButtons = document.querySelectorAll('.btn-distribute');
+            
+            distributeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const row = this.closest('tr');
+                    this.textContent = 'Distributing...';
+                    this.disabled = true;
+                    
+                    setTimeout(() => {
+                        this.textContent = 'Distributed';
+                        this.style.backgroundColor = '#4caf50';
+                    }, 1000);
+                });
+            });
+            
+            // Newsletter subscription
+            const subscribeButton = document.querySelector('.btn-subscribe');
+            const emailInput = document.querySelector('.newsletter-form input');
+            
+            subscribeButton.addEventListener('click', function() {
+                const email = emailInput.value.trim();
+                
+                if (email && isValidEmail(email)) {
+                    alert('Thank you for subscribing to our newsletter!');
+                    emailInput.value = '';
+                } else {
+                    alert('Please enter a valid email address.');
+                }
+            });
+            
+            function isValidEmail(email) {
+                const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return regex.test(email);
+            }
+            
+            // Create a placeholder logo for the sidebar
+            createPlaceholderLogo();
+        });
+
+        // Function to create a placeholder logo
+        function createPlaceholderLogo() {
+            const logoImg = document.querySelector('.sidebar-logo');
+            
+            if (logoImg) {
+                const canvas = document.createElement('canvas');
+                canvas.width = 30;
+                canvas.height = 30;
+                const ctx = canvas.getContext('2d');
+                
+                // Draw a green circle
+                ctx.fillStyle = '#00a651';
+                ctx.beginPath();
+                ctx.arc(15, 15, 15, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Draw the letter "F" in white
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 18px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('F', 15, 15);
+                
+                // Set the canvas as the logo source
+                logoImg.src = canvas.toDataURL();
+            }
+        }
+    </script>
+</body>
+</html>
+<script src="{% static 'js/vindex.js' %}"></script>
+{% endblock %}

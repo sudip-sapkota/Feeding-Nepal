@@ -1,0 +1,143 @@
+{% extends "layout.html" %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Feeding Nepal - Inventory</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="{% static 'css/astyle.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  </head>
+  <body>
+    <!-- Sidebar and Main Content -->
+    <div class="content-wrapper">
+      <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="user-info">
+        <div class="user-avatar">{{ donor.name|slice:":1"|upper }}</div>
+        <div>
+          <div class="user-name">{{ donor.name }}</div>
+          <div class="user-email">{{ donor.email }}</div>
+        </div>
+      </div>
+
+      <a href="#" class="menu-item active"> <i>📊</i> Dashboard </a>
+
+      <a href="{% url 'make_donation' %}" class="menu-item">
+        <i>💰</i> Make Donation
+      </a>
+
+      <a href="{% url 'volunteers_tracking' %}" class="menu-item">
+        <i>👥</i> Volunteers Tracking
+      </a>
+
+      <a href="{% url 'inventory' %}" class="menu-item">
+        <i>📦</i> Inventory
+      </a>
+
+      <a href="{% url 'analytic' %}" class="menu-item"> <i>📈</i> Analytic </a>
+
+      <a href="{% url 'notification' %}" class="menu-item">
+        <i>🔔</i> Notification
+      </a>
+
+      <div class="dashboard-separator"></div>
+
+      <a href="{% url 'logout' %}" class="menu-item logout">
+        <i>🚪</i> Logout
+      </a>
+    </div>
+
+  
+        
+        
+        <!-- Removed the Add button here -->
+
+        <div class="tables-container">
+          <div class="table-section full-width">
+            <h3>Inventory List</h3>
+            <input
+              type="text"
+              placeholder="Search inventory..."
+              style="
+                padding: 8px;
+                margin-bottom: 15px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                float: right;
+                width: 200px;
+              "
+            />
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Food ID</th>
+                  <th>Food Type</th>
+                  <th>Quantity</th>
+                  <th>Storage Type</th>
+                  <th>Packaging Type</th>
+                  <th>Expiry Date</th>
+                  <th>Created At</th>
+                  <th>Updated At</th>
+                  
+                </tr>
+              </thead>
+              <tbody id="inventoryTableBody">
+                {% for item in inventory %}
+                <tr>
+                  <td>{{ item.id }}</td>
+                  <td>{{ item.food_type }}</td>
+                  <td>{{ item.quantity }}</td>
+                  <td>{{ item.storage_type|default:"N/A" }}</td>
+                  <td>{{ item.packaging_type|default:"N/A" }}</td>
+                  <td>{% if item.expiry_date %}{{ item.expiry_date|date:"Y-m-d" }}{% else %}N/A{% endif %}</td>
+                  <td>{{ item.created_at|date:"Y-m-d H:i" }}</td>
+                  <td>{{ item.updated_at|date:"Y-m-d H:i" }}</td>
+                  
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="9" style="text-align: center">No inventory items found.</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+    
+    </div>
+
+    <script>
+      function toggleDropdown(btn) {
+        // Close all dropdowns first
+        document.querySelectorAll(".dropdown-content").forEach((menu) => {
+          if (menu !== btn.nextElementSibling) {
+            menu.style.display = "none";
+          }
+        });
+
+        // Toggle current dropdown
+        const dropdown = btn.nextElementSibling;
+        dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+      }
+
+      // Close if clicked outside
+      window.addEventListener("click", function (e) {
+        if (!e.target.matches(".dropbtn")) {
+          document.querySelectorAll(".dropdown-content").forEach((menu) => {
+            menu.style.display = "none";
+          });
+        }
+      });
+    </script>
+
+    <script src="{% static 'js/vindex.js' %}"></script>
+  </body>
+</html>
+{% endblock %}

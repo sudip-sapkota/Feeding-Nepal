@@ -1,0 +1,155 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<section id="hero" class="hero">
+    <div class="slideshow">
+        <div class="slide active">
+            <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-jjzRvtoe1j04BDi9dDHcsza0g29Ssf.png" alt="Children sharing food">
+            <div class="overlay"></div>
+        </div>
+        <div class="slide">
+            <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-qTxfa14zbMRoiOuinFcm0XxdJZS9bf.png" alt="Child eating">
+            <div class="overlay"></div>
+        </div>
+        <div class="slide">
+            <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-qZZnQa2E2HQfFd4sloZF63sxrbvGWS.png" alt="Children with water container">
+            <div class="overlay"></div>
+        </div>
+    </div>
+    <div class="hero-content">
+        <h1>Fighting Hunger in Nepal</h1>
+        <p>Join our mission to provide sustainable food solutions and end hunger.</p>
+        <div class="hero-buttons">
+            <a href="{% url 'donor_login' %}" class="btn btn-primary">Donate Now</a>
+
+            <button class="btn btn-secondary">Get Involved</button>
+        </div>
+    </div>
+</section>
+
+<section id="about" class="about">
+    <h2>About Us</h2>
+    
+    <div class="about-content">
+        <div class="about-text">
+            <h3>Our Mission</h3>
+            <p>Our mission is to reduce hunger in Nepal by creating sustainable food solutions and providing immediate relief to those in need. We believe that everyone deserves access to nutritious food, and we are committed to making that a reality.</p>
+            
+            <h3>Our Vision</h3>
+            <p>We envision a Nepal where no one goes hungry, where communities are self-sufficient in food production, and where children can focus on education rather than hunger. Our programs are designed to create lasting change.</p>
+        </div>
+        <div class="about-image-container">
+            <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-jpQbxigEnMSe3akFO1xRYDZm67r5ko.png" alt="Woman feeding child" class="about-image">
+        </div>
+    </div>
+
+    <div class="stats">
+        <div class="stat-item">
+            <span class="stat-number">15 +</span>
+            <span class="stat-label">Years of Service</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">8k +</span>
+            <span class="stat-label">People Helped</span>
+        </div>
+    </div>
+</section>
+
+<section id="programs" class="programs">
+    <h2>Our Programs</h2>
+    <div class="program-cards">
+        <div class="program-card">
+            <div class="program-icon">15 +</div>
+            <h3>Emergency Food Distribution</h3>
+            <p>Providing immediate relief to communities affected by natural disasters and food shortages.</p>
+            <button class="btn btn-outline">Learn More</button>
+        </div>
+        <div class="program-card">
+            <div class="program-icon">15 +</div>
+            <h3>Food for Education</h3>
+            <p>Supporting school meal programs to improve attendance and learning outcomes.</p>
+            <button class="btn btn-outline">Learn More</button>
+        </div>
+        <div class="program-card">
+            <div class="program-icon">10 +</div>
+            <h3>Direct to Market</h3>
+            <p>Connecting local farmers with markets to improve income and food availability.</p>
+            <button class="btn btn-outline">Learn More</button>
+        </div>
+        <div class="program-card">
+            <div class="program-icon">5 +</div>
+            <h3>Child & Special Nutrition</h3>
+            <p>Specialized nutrition programs for children and vulnerable populations.</p>
+            <button class="btn btn-outline">Learn More</button>
+        </div>
+    </div>
+</section>
+
+<section id="involved" class="get-involved">
+    <h2>Get Involved</h2>
+    <p>There are many ways you can contribute to our mission of fighting hunger in Nepal. Every donation, no matter how small, makes a difference.</p>
+    
+    <div class="involvement-cards">
+        <div class="involvement-card">
+            <div class="involvement-icon">15 +</div>
+            <h3>Donate</h3>
+            <p>Your financial contribution helps us provide food and support to those in need.</p>
+            <button class="btn btn-primary">Donate Now</button>
+        </div>
+        <div class="involvement-card">
+            <div class="involvement-icon">15 +</div>
+            <h3>Volunteer</h3>
+            <p>Join our team of dedicated volunteers making a difference on the ground.</p>
+            <a href="{% url 'login_view' %}">
+                <button class="btn btn-primary">Join Us</button>
+            </a>
+        </div>
+        <div class="involvement-card">
+            <div class="involvement-icon">10 +</div>
+            <h3>Spread the Word</h3>
+            <p>Help us raise awareness about hunger issues in Nepal.</p>
+            <button class="btn btn-primary">Share</button>
+        </div>
+    </div>
+</section>
+
+<section id="contact" class="contact">
+    <h2>Contact Us</h2>
+    <div class="contact-container">
+        <div class="contact-form">
+            <form id="contactForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" placeholder="Your name">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" placeholder="Your email">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="subject">Subject</label>
+                    <input type="text" id="subject" placeholder="Subject">
+                </div>
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" rows="5" placeholder="Your message"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Send Message</button>
+            </form>
+        </div>
+        <div class="contact-info">
+            <h3>Address</h3>
+            <p>Kathmandu, Nepal<br>Thamel, Kathmandu, Nepal</p>
+            
+            <h3>Email</h3>
+            <p>info@feedingnepal.org</p>
+            
+            <h3>Office Hours</h3>
+            <p>Mon-Fri: 9am - 5pm</p>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
