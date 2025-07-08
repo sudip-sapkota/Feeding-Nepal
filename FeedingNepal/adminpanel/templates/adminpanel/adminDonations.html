@@ -73,13 +73,13 @@
                   </td>
                   <td>
                     <div class="dropdown">
-                      <button onclick="toggleDropdown(this)" class="dropbtn">
-                        Actions ▼
-                      </button>
-                      <div class="dropdown-content">
-                        <a href="#"><i class="fas fa-edit"></i> Edit</a>
-                        <a href="#"><i class="fas fa-trash-alt"></i> Delete</a>
-                      </div>
+                      <button onclick="return confirm('Are you sure you want to delete donation with ID {{ donation.id }}?');" class="dropbtn">
+  <a href="{% url 'delete_item' donation.id %}" style="color: inherit; text-decoration: none;">
+    <i class="fas fa-trash-alt"></i> Delete
+  </a>
+</button>
+
+
                     </div>
                   </td>
                 </tr>

@@ -1,0 +1,146 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Testimonials with Profile</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    /* [Same CSS as you had before — keep that part unchanged] */
+    /* Add the following for modal styles */
+    #reportModal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    #reportModal .modal-content {
+      background: #fff;
+      padding: 30px;
+      max-width: 700px;
+      width: 90%;
+      border-radius: 8px;
+      position: relative;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    #reportModal .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: #999;
+      cursor: pointer;
+    }
+
+    .report-box {
+      margin-bottom: 20px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 15px;
+    }
+
+    .report-box p {
+      margin: 5px 0;
+    }
+
+    .view-report-btn {
+      display: block;
+      margin: 30px auto;
+      background: #ffb400;
+      color: #fff;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .report-title {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 22px;
+      color: #ffb400;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Your entire UI stays the same here -->
+    <!-- ... [your profile, testimonial and review code] ... -->
+
+    <!-- View Report Button -->
+    <button id="openReportModal" class="view-report-btn">View Report</button>
+  </div>
+
+  <!-- Report Modal -->
+  <div id="reportModal">
+    <div class="modal-content">
+      <button class="close-btn" id="closeReportModal">&times;</button>
+      <div class="report-title">Donor Reports</div>
+
+      {% for report in reports %}
+      <div class="report-box">
+        <p><strong>Donor ID:</strong> {{ report.donor_id }}</p>
+        <p><strong>Volunteer ID:</strong> {{ report.volunteer_id }}</p>
+        <p><strong>Message:</strong> {{ report.message }}</p>
+        <p><strong>Date:</strong> {{ report.created_at|date:"F j, Y, g:i a" }}</p>
+      </div>
+      {% empty %}
+      <p style="text-align:center; color:#999;">No reports available.</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // Star rating logic remains unchanged
+      const stars = document.querySelectorAll(".stars-container i");
+      stars.forEach((star) => {
+        star.addEventListener("click", () => {
+          const rating = parseInt(star.dataset.rating);
+          stars.forEach(s => {
+            s.classList.toggle("active", parseInt(s.dataset.rating) <= rating);
+          });
+        });
+      });
+
+      // Edit profile
+      document.querySelector(".edit-button").addEventListener("click", () => {
+        const name = document.querySelector(".profile-name");
+        const email = document.querySelector(".profile-email");
+        const newName = prompt("Enter new name:", name.textContent);
+        if (newName) name.textContent = newName;
+        const newEmail = prompt("Enter new email:", email.textContent);
+        if (newEmail) email.textContent = newEmail;
+      });
+
+      // Modal open/close
+      document.getElementById("openReportModal").addEventListener("click", () => {
+        document.getElementById("reportModal").style.display = "flex";
+      });
+
+      document.getElementById("closeReportModal").addEventListener("click", () => {
+        document.getElementById("reportModal").style.display = "none";
+      });
+
+      // Optional: close modal on outside click
+      window.addEventListener("click", (e) => {
+        if (e.target.id === "reportModal") {
+          document.getElementById("reportModal").style.display = "none";
+        }
+      });
+    });
+  </script>
+</body>
+</html>

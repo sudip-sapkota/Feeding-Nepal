@@ -21,6 +21,9 @@ class Volunteer(models.Model):
 
     def __str__(self):
         return self.full_name
+    
+    class Meta:
+        db_table = 'volunteer'
 
 
 class Message(models.Model):

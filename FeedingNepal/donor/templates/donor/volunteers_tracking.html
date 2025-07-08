@@ -1,196 +1,184 @@
 {% extends "layout.html" %} {% load static %} {% block content %}
+
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Feeding Nepal - Volunteer Dashboard</title>
-  <link rel="stylesheet" href="{% static 'css/vindex.css' %}" />
-  <style>
-    .container {
-      display: flex;
-      min-height: calc(100vh - 60px);
-    }
-    .main-content {
-      flex: 1;
-      padding: 20px;
-    }
-    .content-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-    .content-title {
-      font-size: 24px;
-      font-weight: bold;
-    }
-    .search-container {
-      display: flex;
-      gap: 10px;
-    }
-    .search-input {
-      padding: 8px 12px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      width: 200px;
-    }
-    .search-btn {
-      background-color: #28a745;
-      color: white;
-      border: none;
-      padding: 8px 15px;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    .volunteer-section {
-      background-color: white;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-    .section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px 20px;
-      border-bottom: 1px solid #eee;
-    }
-    .section-title {
-      font-size: 18px;
-      font-weight: bold;
-    }
-    .view-all {
-      color: #007bff;
-      text-decoration: none;
-      font-size: 14px;
-    }
-    .volunteer-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    .volunteer-table th {
-      background-color: #17a2b8;
-      color: white;
-      padding: 12px;
-      text-align: left;
-      font-weight: bold;
-    }
-    .volunteer-table td {
-      padding: 12px;
-      border-bottom: 1px solid #eee;
-    }
-    .volunteer-table tr:hover {
-      background-color: #f8f9fa;
-    }
-    .action-btn {
-      background-color: #28a745;
-      color: white;
-      border: none;
-      padding: 6px 12px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 12px;
-      margin-right: 5px;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="sidebar">
-      <div class="user-info">
-        <div class="user-avatar">
-          <div class="avatar-circle">
-            {{ user.full_name|slice:":1"|upper }}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Feeding Nepal - Volunteer Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/vindex.css' %}" />
+    <style>
+      .container {
+        display: flex;
+        min-height: calc(100vh - 60px);
+      }
+      .main-content {
+        flex: 1;
+        padding: 20px;
+      }
+      .content-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+      .content-title {
+        font-size: 24px;
+        font-weight: bold;
+      }
+      .search-container {
+        display: flex;
+        gap: 10px;
+      }
+      .search-input {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        width: 200px;
+      }
+      .search-btn {
+        background-color: #28a745;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .volunteer-section {
+        background-color: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px;
+        border-bottom: 1px solid #eee;
+      }
+      .section-title {
+        font-size: 18px;
+        font-weight: bold;
+      }
+      .view-all {
+        color: #007bff;
+        text-decoration: none;
+        font-size: 14px;
+      }
+      .volunteer-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .volunteer-table th {
+        background-color: #17a2b8;
+        color: white;
+        padding: 12px;
+        text-align: left;
+        font-weight: bold;
+      }
+      .volunteer-table td {
+        padding: 12px;
+        border-bottom: 1px solid #eee;
+      }
+      .volunteer-table tr:hover {
+        background-color: #f8f9fa;
+      }
+      .action-btn {
+        background-color: #28a745;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        margin-right: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    {% include 'donor/donorsidebar.html' %}
+    <div class="container">
+      
+      <main class="main-content">
+        <div class="content-header">
+          <h1 class="content-title">Welcome to Volunteer Dashboard</h1>
+          <div class="search-container">
+            <input type="text" class="search-input" placeholder="Search..." />
+            <button class="search-btn">🔍</button>
           </div>
         </div>
-        <div class="user-details">
-          <p>{{ user.full_name }}</p>
-          <p>{{ user.email }}</p>
+
+        <div class="volunteer-section">
+          <div class="section-header">
+            <h2 class="section-title">Volunteer List</h2>
+            <a href="{% url 'donor_reports' %}" class="view-all">View Report</a>
+          </div>
+          <table class="volunteer-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+
+                <th>City</th>
+                <th>Availability</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for volunteer in volunteers %}
+              <tr>
+                <td>{{ volunteer.id }}</td>
+                <td>{{ volunteer.full_name }}</td>
+
+                <td>{{ volunteer.city }}</td>
+                <td>{{ volunteer.availability }}</td>
+                <td>
+                  <a href="tel:{{ volunteer.mobile }}" class="action-btn"
+                    >Call</a
+                  >
+                  <a
+                    href="{% url 'send_message' volunteer.id %}"
+                    class="action-btn"
+                    >Message</a
+                  >
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
-      </div>
-
-      <nav class="sidebar-nav">
-        <a href="#" class="active"><div class="icon">📊</div><span>Dashboard</span></a>
-        <a href="{% url 'food_available' %}"><div class="icon">🍱</div><span>Food Available</span></a>
-        <a href="{% url 'volunteers_tracking' %}"><div class="icon">👥</div><span>Volunteers Tracking</span></a>
-        <a href="#"><div class="icon">📦</div><span>Inventory</span></a>
-        <a href="#"><div class="icon">📈</div><span>Analytic</span></a>
-        <a href="#"><div class="icon">🔔</div><span>Notification</span></a>
-      </nav>
-
-      <a href="#" class="logout"><span>🚪 Logout</span></a>
+      </main>
     </div>
 
-    <main class="main-content">
-      <div class="content-header">
-        <h1 class="content-title">Welcome to Volunteer Dashboard</h1>
-        <div class="search-container">
-          <input type="text" class="search-input" placeholder="Search..." />
-          <button class="search-btn">🔍</button>
-        </div>
-      </div>
+    <script>
+      document
+        .querySelector(".search-btn")
+        .addEventListener("click", function () {
+          const searchTerm = document.querySelector(".search-input").value;
+          if (searchTerm) alert("Searching for: " + searchTerm);
+        });
 
-      <div class="volunteer-section">
-        <div class="section-header">
-          <h2 class="section-title">Volunteer List</h2>
-          <a href="#" class="view-all">View All</a>
-        </div>
-        <table class="volunteer-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Mobile</th>
-              <th>City</th>
-              <th>Availability</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for volunteer in volunteers %}
-            <tr>
-              <td>{{ volunteer.id }}</td>
-              <td>{{ volunteer.full_name }}</td>
-              <td>{{ volunteer.mobile }}</td>
-              <td>{{ volunteer.city }}</td>
-              <td>{{ volunteer.availability }}</td>
-              <td>
-                <a href="tel:{{ volunteer.mobile }}" class="action-btn">Call</a>
-                <a href="{% url 'send_message' volunteer.id %}" class="action-btn">Message</a>
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </main>
-  </div>
+      document
+        .querySelector(".search-input")
+        .addEventListener("keypress", function (e) {
+          if (e.key === "Enter") {
+            const searchTerm = this.value;
+            if (searchTerm) alert("Searching for: " + searchTerm);
+          }
+        });
 
-  <script>
-    document.querySelector(".search-btn").addEventListener("click", function () {
-      const searchTerm = document.querySelector(".search-input").value;
-      if (searchTerm) alert("Searching for: " + searchTerm);
-    });
+      document.querySelectorAll(".action-btn").forEach((btn) => {
+        btn.addEventListener("click", function () {
+          const action = this.textContent;
+          const row = this.closest("tr");
+          const name = row.cells[1].textContent;
 
-    document.querySelector(".search-input").addEventListener("keypress", function (e) {
-      if (e.key === "Enter") {
-        const searchTerm = this.value;
-        if (searchTerm) alert("Searching for: " + searchTerm);
-      }
-    });
-
-    document.querySelectorAll(".action-btn").forEach((btn) => {
-      btn.addEventListener("click", function () {
-        const action = this.textContent;
-        const row = this.closest("tr");
-        const name = row.cells[1].textContent;
-
-        if (action === "Call") alert(`Calling ${name}...`);
-        else if (action === "Message") alert(`Messaging ${name}...`);
+          if (action === "Call") alert(`Calling ${name}...`);
+          else if (action === "Message") alert(`Messaging ${name}...`);
+        });
       });
-    });
-  </script>
-</body>
+    </script>
+  </body>
 </html>
 {% endblock %}

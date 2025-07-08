@@ -1,14 +1,22 @@
-<div class="sidebar">
-    <div class="user-info">
-        <div class="user-avatar">
-            {{ donor.name|slice:":1"|upper }}
-        </div>
-        <div>
-            <div class="user-name">{{ donor.name }}</div>
-            <div class="user-email">{{ donor.email }}</div>
-        </div>
+{% if donor %}
+<div class="user-info">
+    <div class="user-avatar">
+        {{ donor.name|slice:":1"|upper }}
     </div>
-
+    <div>
+        <div class="user-name">{{ donor.name }}</div>
+        <div class="user-email">{{ donor.email }}</div>
+    </div>
+</div>
+{% else %}
+<div class="user-info">
+    <div class="user-avatar">?</div>
+    <div>
+        <div class="user-name">Guest</div>
+        <div class="user-email">Please log in</div>
+    </div>
+</div>
+{% endif %}
     <a href="#" class="menu-item active">
         <i>📊</i> Dashboard
     </a>

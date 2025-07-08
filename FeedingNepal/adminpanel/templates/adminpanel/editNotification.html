@@ -1,0 +1,69 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Edit Notification</title>
+  <style>
+    /* Same styles as your send notification modal */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: flex; align-items: center; justify-content: center; z-index: 9999;
+    }
+    .modal {
+      background: #fff; width: 400px; border-radius: 8px; position: relative; padding: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    .modal h2 { margin-top: 0; font-size: 22px; text-align: center; }
+    .modal label { display: block; margin: 10px 0 5px; font-weight: bold; }
+    .modal input, .modal select, .modal textarea {
+      width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 4px; border: 1px solid #ccc;
+    }
+    .modal button {
+      padding: 10px 20px; background-color: #007bff; color: white; font-weight: bold;
+      border: none; border-radius: 4px; cursor: pointer; display: block; width: 100%;
+    }
+    .modal button:hover { background-color: #28a745; }
+    .close-btn {
+      position: absolute; top: 8px; right: 12px; font-size: 20px; cursor: pointer;
+      color: #555; font-weight: bold;
+    }
+    .close-btn:hover { color: red; }
+  </style>
+</head>
+<body>
+  <div class="modal-overlay">
+    <div class="modal">
+      <span class="close-btn" onclick="closeModal()">×</span>
+      <h2>Edit Notification</h2>
+      <form method="POST" action="{% url 'edit_notification' notification.id %}">
+        {% csrf_token %}
+        
+        <label>Number</label>
+        <input type="text" name="number" value="{{ notification.number }}" required>
+
+        <label>Email</label>
+        <input type="email" name="gmail" value="{{ notification.gmail }}" required>
+
+        <label>Role</label>
+        <select name="role" required>
+          <option value="donor" {% if notification.role == 'donor' %}selected{% endif %}>Donor</option>
+          <option value="volunteer" {% if notification.role == 'volunteer' %}selected{% endif %}>Volunteer</option>
+        </select>
+
+        <label>Message</label>
+        <textarea name="message" required>{{ notification.message }}</textarea>
+
+        <button type="submit">Update</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function closeModal() {
+      window.location.href = "{% url 'admin_notifications' %}";
+    }
+  </script>
+</body>
+</html>

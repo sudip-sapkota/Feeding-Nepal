@@ -5,6 +5,7 @@ from django.contrib.auth.hashers import check_password, make_password
 from datetime import datetime
 from adminpanel.models import Inventory
 from volunteer.models import Volunteer
+from volunteer.models import DonorReport
 
 def register_view(request):
     if request.method == 'POST':
@@ -47,6 +48,7 @@ def login_view(request):
         try:
             donor = Donor.objects.get(email=email)
             if check_password(password, donor.password):
+                # Set donor_id in session for context processor usage
                 request.session['donor_id'] = donor.id
                 messages.success(request, "Login successful!")
                 return redirect('index')
@@ -58,13 +60,8 @@ def login_view(request):
     return render(request, 'donor/login.html')
 
 def index_view(request):
-    donor = None
-    if 'donor_id' in request.session:
-        try:
-            donor = Donor.objects.get(id=request.session['donor_id'])
-        except Donor.DoesNotExist:
-            donor = None
-    return render(request, 'donor/index.html', {'donor': donor})
+    # donor is injected globally via context processor, no need to query here
+    return render(request, 'donor/index.html')
 
 def make_donation(request):
     if request.method == 'POST':
@@ -131,17 +128,9 @@ def search_volunteers(request):
     }
     return render(request, 'donor/index.html', context)
 
-# Menu page stubs (pass or simple render)
-
-
-
 def volunteers_tracking_view(request):
     volunteers = Volunteer.objects.all()
     return render(request, 'donor/volunteers_tracking.html', {'volunteers': volunteers})
-        
-   
-  
-
 
 def inventory_view(request):
     inventory = Inventory.objects.all().order_by('-updated_at')
@@ -160,3 +149,11 @@ def logout_view(request):
     request.session.flush()
     messages.success(request, "Logged out successfully.")
     return redirect('donor_login')
+
+def donor_report_view(request):
+    reports = DonorReport.objects.select_related('donor').order_by('-created_at')  # optimized query
+    return render(request, 'donor/donorReport.html', {'reports': reports})
+
+def my_donation(request):
+    donations = Donate.objects.all()
+    return render(request, 'donor/myDonation.html', {'donations': donations})

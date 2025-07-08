@@ -1,4 +1,6 @@
 from django.db import models
+from donor.models import Donor  # assuming your donor model is here
+from volunteer.models import Volunteer
 
 class Volunteer(models.Model):
     full_name = models.CharField(max_length=255)
@@ -24,3 +26,12 @@ class Inventory(models.Model):
         return f"{self.food_type} - {self.quantity}"
     class Meta:
         db_table = 'inventory'
+        
+class Notification(models.Model):
+    number = models.CharField(max_length=20)
+    gmail = models.CharField(max_length=254)
+    role = models.CharField(max_length=20)
+    message = models.TextField()
+    donor = models.ForeignKey(Donor, null=True, blank=True, on_delete=models.CASCADE)
+    volunteer = models.ForeignKey(Volunteer, null=True, blank=True, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)

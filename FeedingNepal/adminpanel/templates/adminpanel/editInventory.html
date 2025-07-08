@@ -1,0 +1,180 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Edit Inventory</title>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+  <link rel="stylesheet" href="{% static 'css/astyle.css' %}" />
+  <style>
+    /* Popup overlay and box styles */
+    .popup-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    .popup-box {
+      background: #fff;
+      padding: 25px 30px;
+      border-radius: 8px;
+      width: 400px;
+      position: relative;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .popup-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      font-size: 20px;
+      cursor: pointer;
+      color: #888;
+      transition: color 0.3s ease;
+    }
+    .popup-close:hover {
+      color: #333;
+    }
+    form label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: #444;
+    }
+    form input[type="text"],
+    form input[type="number"],
+    form input[type="date"],
+    form select {
+      width: 100%;
+      padding: 8px 10px;
+      margin-bottom: 18px;
+      border: 1.5px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+      transition: border-color 0.3s ease;
+    }
+    form input[type="text"]:focus,
+    form input[type="number"]:focus,
+    form input[type="date"]:focus,
+    form select:focus {
+      border-color: #28a745;
+      outline: none;
+    }
+    .btn-submit {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.3s ease;
+    }
+    .btn-submit:hover {
+      background-color: #218838;
+    }
+    .error-message {
+      color: red;
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="popup-overlay" id="popupOverlay">
+    <div class="popup-box">
+      <i class="fas fa-times popup-close" id="popupClose"></i>
+      <h2>Edit Inventory Item</h2>
+
+      {% if error %}
+      <div class="error-message">{{ error }}</div>
+      {% endif %}
+
+      <form method="POST" action="{% url 'edit_inventory' inventory.id %}" id="editInventoryForm">
+        {% csrf_token %}
+
+        <label for="food_type">Food Type</label>
+        <select name="food_type" id="food_type" required>
+          <option value="" {% if not inventory.food_type %}selected{% endif %}>Select Food Type</option>
+          {% for option in food_type_options %}
+            <option value="{{ option }}" {% if inventory.food_type == option %}selected{% endif %}>{{ option }}</option>
+          {% endfor %}
+        </select>
+
+        <label for="quantity">Quantity</label>
+        <input
+          type="text"
+          name="quantity"
+          id="quantity"
+          value="{{ inventory.quantity }}"
+          required
+        />
+
+        <label for="storage_type">Storage Type</label>
+        <input
+          type="text"
+          name="storage_type"
+          id="storage_type"
+          placeholder="E.g., Refrigerated, Room Temp"
+          value="{{ inventory.storage_type }}"
+        />
+
+        <label for="packaging_type">Packaging Type</label>
+        <input
+          type="text"
+          name="packaging_type"
+          id="packaging_type"
+          placeholder="E.g., Box, Bag, Bottle"
+          value="{{ inventory.packaging_type }}"
+        />
+
+        <label for="expiry_date">Expiry Date</label>
+        <input
+          type="date"
+          name="expiry_date"
+          id="expiry_date"
+          value="{{ inventory.expiry_date|date:'Y-m-d' }}"
+        />
+
+        <button type="submit" class="btn-submit">Update Item</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('popupClose').addEventListener('click', function () {
+      window.history.back();
+    });
+
+    const foodTypeSelect = document.getElementById('food_type');
+    const expiryDateInput = document.getElementById('expiry_date');
+
+    foodTypeSelect.addEventListener('change', () => {
+      const today = new Date();
+      let expiryDays = 7;
+
+      switch(foodTypeSelect.value) {
+        case 'Fresh Produce': expiryDays = 5; break;
+        case 'Dairy': expiryDays = 10; break;
+        case 'Bakery': expiryDays = 3; break;
+        case 'Canned Goods': expiryDays = 365; break;
+        case 'Junk Food': expiryDays = 180; break;
+        default: expiryDays = 7;
+      }
+
+      today.setDate(today.getDate() + expiryDays);
+      const yyyy = today.getFullYear();
+      const mm = String(today.getMonth() + 1).padStart(2, '0');
+      const dd = String(today.getDate()).padStart(2, '0');
+      expiryDateInput.value = `${yyyy}-${mm}-${dd}`;
+    });
+  </script>
+</body>
+</html>
