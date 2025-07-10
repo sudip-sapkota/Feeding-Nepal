@@ -6,6 +6,29 @@ from datetime import datetime
 from adminpanel.models import Inventory
 from volunteer.models import Volunteer
 from volunteer.models import DonorReport
+from adminpanel.models import Notification
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
+import json
+
+# Utility function to create donor reports with volunteer names
+def create_donor_report(donor_id, volunteer_name, message):
+    """
+    Utility function to create a donor report with volunteer information
+    """
+    try:
+        from volunteer.models import DonorReport
+        donor = Donor.objects.get(id=donor_id)
+        report = DonorReport.objects.create(
+            donor=donor,
+            volunteer_name=volunteer_name,
+            message=message
+        )
+        return report
+    except Exception as e:
+        print(f"Error creating donor report: {e}")
+        return None
 
 def register_view(request):
     if request.method == 'POST':
@@ -143,17 +166,231 @@ def analytic_view(request):
     return render(request, 'donor/analytic.html')
 
 def notification_view(request):
-    return render(request, 'donor/notification.html')
+    if 'donor_id' not in request.session:
+        return render(request, 'donor/notification.html', {'notifications': []})
+
+    donor_id = request.session.get('donor_id')
+    try:
+        donor = Donor.objects.get(id=donor_id)
+    except Donor.DoesNotExist:
+        return render(request, 'donor/notification.html', {'notifications': []})
+
+    # Only show notifications specifically for this donor
+    notifications = Notification.objects.filter(
+        role='donor',
+        donor_id=donor.id
+    )
+
+    notifications = notifications.order_by('-created_at')
+
+    return render(request, 'donor/notification.html', {'notifications': notifications})
+
+@csrf_exempt
+@require_http_methods(["GET", "POST"])
+def notification_api(request):
+    """
+    API endpoint for notifications that matches donor login ID
+    GET: Retrieve notifications for a specific donor
+    POST: Create a new notification for a donor
+    """
+    if request.method == 'GET':
+        # Extract donor_id from query parameters or session
+        donor_id = request.GET.get('donor_id') or request.session.get('donor_id')
+        
+        if not donor_id:
+            return JsonResponse({
+                'success': False,
+                'message': 'Donor ID is required',
+                'notifications': []
+            }, status=400)
+        
+        try:
+            donor = Donor.objects.get(id=donor_id)
+        except Donor.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'message': 'Donor not found',
+                'notifications': []
+            }, status=404)
+        
+        # Fetch notifications for this specific donor only
+        notifications = Notification.objects.filter(
+            role='donor',
+            donor_id=donor.id
+        )
+        
+        notifications = notifications.order_by('-created_at')
+        
+        notifications_data = [
+            {
+                'id': n.id,
+                'number': n.number,
+                'gmail': n.gmail,
+                'message': n.message,
+                'created_at': n.created_at.isoformat() if n.created_at else None,
+                'donor_id': n.donor.id if n.donor else None,
+                'donor_name': n.donor.name if n.donor else None
+            } for n in notifications
+        ]
+        
+        return JsonResponse({
+            'success': True,
+            'donor_id': donor.id,
+            'donor_name': donor.name,
+            'notifications': notifications_data
+        })
+    
+    elif request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({
+                'success': False,
+                'message': 'Invalid JSON data'
+            }, status=400)
+        
+        donor_id = data.get('donor_id') or request.session.get('donor_id')
+        message = data.get('message')
+        
+        if not donor_id or not message:
+            return JsonResponse({
+                'success': False,
+                'message': 'donor_id and message are required'
+            }, status=400)
+        
+        try:
+            donor = Donor.objects.get(id=donor_id)
+        except Donor.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'message': 'Donor not found'
+            }, status=404)
+        
+        # Create notification
+        notification = Notification.objects.create(
+            number=donor.phone,
+            gmail=donor.email,
+            role='donor',
+            message=message,
+            donor=donor
+        )
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Notification created successfully',
+            'notification': {
+                'id': notification.id,
+                'number': notification.number,
+                'gmail': notification.gmail,
+                'message': notification.message,
+                'created_at': notification.created_at.isoformat(),
+                'donor_id': notification.donor.id,
+                'donor_name': notification.donor.name
+            }
+        })
 
 def logout_view(request):
     request.session.flush()
     messages.success(request, "Logged out successfully.")
     return redirect('donor_login')
 
+
 def donor_report_view(request):
-    reports = DonorReport.objects.select_related('donor').order_by('-created_at')  # optimized query
-    return render(request, 'donor/donorReport.html', {'reports': reports})
+    """
+    View to display donor reports with security check: login_id == donor_id
+    Only the logged-in donor can see their own reports
+    """
+    # Get the logged-in donor's ID from session (this is our login_id)
+    login_id = request.session.get('donor_id')
+    if not login_id:
+        messages.error(request, "You must be logged in to view reports.")
+        return redirect('donor_login')
+
+    # Verify the donor exists
+    try:
+        donor = Donor.objects.get(id=login_id)
+    except Donor.DoesNotExist:
+        messages.error(request, "Invalid donor account.")
+        return redirect('donor_login')
+
+    # Security check: only fetch reports where donor_id matches login_id
+    # This ensures login_id == donor_id as requested
+    reports = DonorReport.objects.filter(
+        donor_id=login_id  # Using donor_id directly for explicit matching
+    ).order_by('-created_at')
+    
+    context = {
+        'reports': [
+            {
+                'id': report.id,
+                'message': report.message,
+                'volunteer_name': report.volunteer_name or 'Not assigned',
+                'created_at': report.created_at
+            }
+            for report in reports
+        ],
+        'donor': donor,
+        'total_reports': reports.count()
+    }
+    
+    return render(request, 'donor/donorReport.html', context)
 
 def my_donation(request):
     donations = Donate.objects.all()
     return render(request, 'donor/myDonation.html', {'donations': donations})
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def report_volunteer(request):
+    """
+    Handle volunteer reporting by donors
+    """
+    try:
+        # Check if donor is logged in
+        donor_id = request.session.get('donor_id')
+        if not donor_id:
+            return JsonResponse({
+                'success': False,
+                'message': 'You must be logged in to submit a report.'
+            }, status=401)
+        
+        # Get donor information
+        try:
+            donor = Donor.objects.get(id=donor_id)
+        except Donor.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'message': 'Invalid donor account.'
+            }, status=404)
+        
+        # Get form data
+        volunteer_id = request.POST.get('volunteer_id')
+        volunteer_name = request.POST.get('volunteer_name')
+        message = request.POST.get('message')
+        
+        if not all([volunteer_id, volunteer_name, message]):
+            return JsonResponse({
+                'success': False,
+                'message': 'All fields are required.'
+            }, status=400)
+        
+        # Create volunteer report
+        from volunteer.models import VolunteerReport
+        report = VolunteerReport.objects.create(
+            volunteer_id=volunteer_id,
+            volunteer_name=volunteer_name,
+            donor_name=donor.name,
+            message=message
+        )
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Report submitted successfully!',
+            'report_id': report.id
+        })
+        
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'message': f'An error occurred: {str(e)}'
+        }, status=500)

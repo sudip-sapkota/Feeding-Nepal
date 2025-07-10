@@ -7,54 +7,19 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Feeding Nepal - Inventory</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-    <link rel="stylesheet" href="{% static 'css/astyle.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  
+    <link rel="stylesheet" href="{% static 'css/inven.css' %}" />
+    {% comment %} <link rel="stylesheet" href="{% static 'css/style.css' %}" /> {% endcomment %}
+    <link rel="stylesheet" href="{% static 'css/donorsidebar.css' %}" />
   </head>
   <body>
     <!-- Sidebar and Main Content -->
-    <div class="content-wrapper">
-      <!-- Sidebar -->
-    <div class="sidebar">
-      <div class="user-info">
-        <div class="user-avatar">{{ donor.name|slice:":1"|upper }}</div>
-        <div>
-          <div class="user-name">{{ donor.name }}</div>
-          <div class="user-email">{{ donor.email }}</div>
-        </div>
-      </div>
+        {% include 'donor/donorsidebar.html' %}
 
-      <a href="#" class="menu-item active"> <i>📊</i> Dashboard </a>
-
-      <a href="{% url 'make_donation' %}" class="menu-item">
-        <i>💰</i> Make Donation
-      </a>
-
-      <a href="{% url 'volunteers_tracking' %}" class="menu-item">
-        <i>👥</i> Volunteers Tracking
-      </a>
-
-      <a href="{% url 'inventory' %}" class="menu-item">
-        <i>📦</i> Inventory
-      </a>
-
-      <a href="{% url 'analytic' %}" class="menu-item"> <i>📈</i> Analytic </a>
-
-      <a href="{% url 'notification' %}" class="menu-item">
-        <i>🔔</i> Notification
-      </a>
-
-      <div class="dashboard-separator"></div>
-
-      <a href="{% url 'logout' %}" class="menu-item logout">
-        <i>🚪</i> Logout
-      </a>
-    </div>
 
   
+
+
         
         
         <!-- Removed the Add button here -->

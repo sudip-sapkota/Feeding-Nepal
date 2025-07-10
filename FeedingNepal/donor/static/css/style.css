@@ -18,65 +18,6 @@ main {
     transition: 0.3s ease;
 }
 
-/* === Sidebar === */
-.sidebar {
-    width: 200px;
-    background: #fff;
-    height: calc(100vh - 120px);
-    border-right: 1px solid #e0e0e0;
-    overflow-y: auto;
-    transition: 0.3s ease;
-}
-.user-info {
-    display: flex;
-    align-items: center;
-    padding: 15px;
-    border-bottom: 1px solid #e0e0e0;
-}
-.user-avatar {
-    width: 40px;
-    height: 40px;
-    background: #5cff5c;
-    border-radius: 50%;
-    color: #000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font: bold 18px sans-serif;
-    margin-right: 10px;
-}
-.user-name {
-    font-weight: bold;
-}
-.user-name, .user-email {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-.user-email {
-    font-size: 12px;
-    color: #666;
-}
-.menu-item {
-    display: flex;
-    align-items: center;
-    padding: 12px 15px;
-    color: #333;
-    text-decoration: none;
-    cursor: pointer;
-}
-.menu-item i {
-    margin-right: 10px;
-    font-size: 16px;
-}
-.menu-item.active {
-    background: #f0f0f0;
-    color: #3a8e3a;
-    border-left: 3px solid #3a8e3a;
-}
-.menu-item.logout {
-    color: #ff6b6b;
-}
 
 /* === Header & Search === */
 .dashboard-header {

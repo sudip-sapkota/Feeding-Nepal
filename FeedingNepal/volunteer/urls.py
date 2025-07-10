@@ -13,4 +13,9 @@ urlpatterns = [
     path('inventory/', views.inventory_view, name='volunteer_inventory'),
     path('inventory/collect/<int:item_id>/', views.collect_inventory, name='collect_inventory'),
     path('donor/<int:donor_id>/report/', views.donor_report, name='donor_report'),
+    path('notifications/', views.volunteer_notification_view, name='volunteer_notifications'),
+    path('api/notifications/', views.volunteer_notification_api, name='volunteer_notification_api'),
+    path('check-health/', views.check_health, name='check_health'),
+    path('notification-response/', views.handle_notification_response, name='handle_notification_response'),
+    path('volunteer-reports/', views.volunteer_report_view, name='volunteer_reports'),
 ]

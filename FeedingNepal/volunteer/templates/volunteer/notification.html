@@ -1,0 +1,378 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Notifications</title>
+
+  <!--  Font‑Awesome for icons (optional)  -->
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+  <style>
+    /*  ==== RESET / BASE ====  */
+    *{margin:0;padding:0;box-sizing:border-box;font-family:"Arial",sans-serif}
+    body{background:#f5f5f5;color:#333;line-height:1.5}
+
+    /*  ==== WRAPPER ====  */
+    .wrapper{
+      max-width:800px;
+      margin:40px auto;
+      background:#fff;
+      padding:30px 25px;
+      border-radius:8px;
+      box-shadow:0 8px 20px rgba(0,0,0,.06);
+    }
+
+    .header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:25px;
+    }
+    .header h2{font-size:24px;font-weight:700;color:#222}
+    .header .count{
+      background:#28a745;
+      color:#fff;
+      padding:4px 10px;
+      border-radius:12px;
+      font-size:14px;
+    }
+
+    /*  ==== LIST ====  */
+    .notif-list{list-style:none;width:100%}
+    .notif-item{
+      display:flex;
+      align-items:flex-start;
+      gap:15px;
+      padding:18px 15px;
+      border-radius:6px;
+      background:#fff;
+      border:1px solid #eee;
+      margin-bottom:15px;
+      transition:background .25s;
+      position:relative;
+    }
+    .notif-item.unread{background:#f0f9ff}
+    .notif-item:hover{background:#e6f7ff}
+
+    .notif-icon{
+      font-size:24px;
+      color:#28a745;
+      flex-shrink:0;
+      width:32px;text-align:center;
+    }
+
+    .notif-content{flex:1}
+    .notif-msg{font-size:15px;margin-bottom:6px;word-break:break-word}
+    .notif-meta{font-size:13px;color:#666}
+
+    /*  dismiss (simple front‑end hide)  */
+    .dismiss{
+      background:none;
+      border:none;
+      color:#999;
+      font-size:18px;
+      cursor:pointer;
+      position:absolute;
+      top:10px;
+      right:12px;
+      transition:color .2s, transform .2s;
+    }
+    .dismiss:hover{color:#666;transform:scale(1.2)}
+
+    /* EMPTY STATE */
+    .empty{
+      text-align:center;
+      color:#999;
+      padding:40px 0;
+    }
+
+    /*  ==== RESPONSIVE  ==== */
+    @media(max-width:600px){
+      .wrapper{padding:25px 15px}
+      .header h2{font-size:20px}
+    }
+
+    /* Refresh button styles */
+    .refresh-btn {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-left: 10px;
+      transition: background 0.3s;
+    }
+    .refresh-btn:hover { background: #0056b3; }
+    .refresh-btn:disabled { background: #6c757d; cursor: not-allowed; }
+    .loading { opacity: 0.7; }
+    .notification-status {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #28a745;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 4px;
+      display: none;
+      z-index: 1000;
+    }
+    .notification-status.error { background: #dc3545; }
+  </style>
+</head>
+<body>
+
+  <div class="wrapper">
+    <!-- ===== Header ===== -->
+    <div class="header">
+      <h2>Volunteer Notifications</h2>
+      <span class="count">{{ notifications|length }}</span>
+    </div>
+
+    <!-- ===== Notification List ===== -->
+    {% if notifications %}
+      <ul class="notif-list">
+        {% for n in notifications %}
+          <li class="notif-item unread" data-id="{{ n.id }}">
+            <span class="notif-icon"><i class="fas fa-bell"></i></span>
+
+            <div class="notif-content">
+              <p class="notif-msg">{{ n.message }}</p>
+              <div class="notif-meta">
+                {{ n.created_at|date:"M j, Y • g:i A" }}
+              </div>
+            </div>
+
+            <!-- Front‑end dismiss -->
+            <button class="dismiss" title="Dismiss">&times;</button>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="empty">No notifications.</p>
+    {% endif %}
+  </div>
+
+  <!-- Status notification div -->
+  <div class="notification-status" id="status-notification"></div>
+
+  <script>
+    // === Enhanced notification system with API integration ===
+    let lastUpdateTime = new Date();
+    let refreshInterval;
+    
+    document.addEventListener("DOMContentLoaded", ()=>{
+      initializeNotifications();
+      startAutoRefresh();
+    });
+    
+    function initializeNotifications() {
+      // Initialize dismiss buttons
+      attachDismissHandlers();
+      
+      // Add refresh button
+      const header = document.querySelector('.header');
+      const refreshBtn = document.createElement('button');
+      refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh';
+      refreshBtn.className = 'refresh-btn';
+      refreshBtn.onclick = () => fetchNotifications();
+      header.appendChild(refreshBtn);
+    }
+    
+    function attachDismissHandlers() {
+      document.querySelectorAll(".dismiss").forEach(btn=>{
+        btn.addEventListener("click", e=>{
+          e.preventDefault();
+          const item = btn.closest(".notif-item");
+          item.style.opacity = "0";
+          setTimeout(()=>item.remove(), 200);
+          updateNotificationCount();
+        });
+      });
+    }
+    
+    function showStatus(message, isError = false) {
+      const statusDiv = document.getElementById('status-notification');
+      statusDiv.textContent = message;
+      statusDiv.className = `notification-status ${isError ? 'error' : ''}`;
+      statusDiv.style.display = 'block';
+      
+      setTimeout(() => {
+        statusDiv.style.display = 'none';
+      }, 3000);
+    }
+    
+    async function fetchNotifications() {
+      const refreshBtn = document.querySelector('.refresh-btn');
+      const wrapper = document.querySelector('.wrapper');
+      
+      try {
+        refreshBtn.disabled = true;
+        refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+        wrapper.classList.add('loading');
+        
+        const response = await fetch('/volunteer/api/notifications/', {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          updateNotificationsList(data.notifications);
+          lastUpdateTime = new Date();
+          showStatus(`Updated ${data.notifications.length} notifications`);
+        } else {
+          showStatus(data.message || 'Failed to fetch notifications', true);
+        }
+        
+      } catch (error) {
+        console.error('Error fetching notifications:', error);
+        showStatus('Error fetching notifications: ' + error.message, true);
+      } finally {
+        refreshBtn.disabled = false;
+        refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh';
+        wrapper.classList.remove('loading');
+      }
+    }
+    
+    function updateNotificationsList(notifications) {
+      const notifList = document.querySelector('.notif-list');
+      const emptyMessage = document.querySelector('.empty');
+      
+      if (notifications.length === 0) {
+        if (notifList) notifList.style.display = 'none';
+        if (!emptyMessage) {
+          const emptyDiv = document.createElement('p');
+          emptyDiv.className = 'empty';
+          emptyDiv.textContent = 'No notifications.';
+          document.querySelector('.wrapper').appendChild(emptyDiv);
+        } else {
+          emptyMessage.style.display = 'block';
+        }
+        return;
+      }
+      
+      if (emptyMessage) emptyMessage.style.display = 'none';
+      
+      if (!notifList) {
+        const newList = document.createElement('ul');
+        newList.className = 'notif-list';
+        document.querySelector('.wrapper').appendChild(newList);
+      }
+      
+      const listElement = document.querySelector('.notif-list');
+      listElement.innerHTML = '';
+      
+      notifications.forEach(notification => {
+        const listItem = createNotificationItem(notification);
+        listElement.appendChild(listItem);
+      });
+      
+      listElement.style.display = 'block';
+      attachDismissHandlers();
+      updateNotificationCount();
+    }
+    
+    function createNotificationItem(notification) {
+      const li = document.createElement('li');
+      li.className = 'notif-item unread';
+      li.setAttribute('data-id', notification.id);
+      
+      const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return date.toLocaleString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric',
+          hour: 'numeric',
+          minute: '2-digit',
+          hour12: true
+        });
+      };
+      
+      li.innerHTML = `
+        <span class="notif-icon"><i class="fas fa-bell"></i></span>
+        <div class="notif-content">
+          <p class="notif-msg">${notification.message}</p>
+          <div class="notif-meta">
+            ${formatDate(notification.created_at)}
+            ${notification.volunteer_name ? ` • Volunteer: ${notification.volunteer_name}` : ''}
+          </div>
+        </div>
+        <button class="dismiss" title="Dismiss">&times;</button>
+      `;
+      
+      return li;
+    }
+    
+    function updateNotificationCount() {
+      const count = document.querySelectorAll('.notif-item').length;
+      const countSpan = document.querySelector('.count');
+      if (countSpan) {
+        countSpan.textContent = count;
+      }
+    }
+    
+    function startAutoRefresh() {
+      // Auto-refresh every 30 seconds
+      refreshInterval = setInterval(() => {
+        fetchNotifications();
+      }, 30000);
+    }
+    
+    // Clean up interval when page is hidden/unloaded
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden && refreshInterval) {
+        clearInterval(refreshInterval);
+      } else if (!document.hidden && !refreshInterval) {
+        startAutoRefresh();
+      }
+    });
+    
+    window.addEventListener('beforeunload', () => {
+      if (refreshInterval) {
+        clearInterval(refreshInterval);
+      }
+    });
+    
+    // Test function to create a notification (for demonstration)
+    window.createTestNotification = async function() {
+      try {
+        const response = await fetch('/volunteer/api/notifications/', {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            message: `Test notification created at ${new Date().toLocaleString()}`
+          })
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+          showStatus('Test notification created!');
+          setTimeout(() => fetchNotifications(), 1000);
+        } else {
+          showStatus('Failed to create test notification: ' + data.message, true);
+        }
+      } catch (error) {
+        showStatus('Error creating test notification: ' + error.message, true);
+      }
+    };
+  </script>
+
+</body>
+</html>

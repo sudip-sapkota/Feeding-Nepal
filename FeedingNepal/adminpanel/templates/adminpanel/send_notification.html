@@ -87,8 +87,9 @@
       <h2>Send Notification</h2>
       <form method="POST">
   {% csrf_token %}
-  <label>Number</label>
-  <input type="text" name="number" required>
+  <label>Number (separate multiple numbers with commas)</label>
+  <input type="text" name="number" placeholder="e.g., 9876543210, 9876543211, 9876543212" required>
+  <small style="color: #666; font-size: 12px;">You can enter multiple phone numbers separated by commas</small>
 
   <label>Email</label>
   <input type="email" name="gmail" required>

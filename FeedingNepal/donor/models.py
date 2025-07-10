@@ -33,3 +33,7 @@ class Donate(models.Model):
 
     def __str__(self):
         return f"{self.food_type} - {self.quantity}"
+    
+    
+    class Meta:
+        db_table = 'donate' 

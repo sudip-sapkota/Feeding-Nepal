@@ -1,0 +1,171 @@
+{% csrf_token %}
+<div class="health-analysis-container">
+    <h3>Health Analysis for {{ health_analysis.volunteer_name }}</h3>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <h4>Health Metrics</h4>
+            <table class="table table-bordered">
+                <tr><td><strong>Overall Health Score:</strong></td><td>{{ health_analysis.health_score|floatformat:1 }}/100</td></tr>
+                <tr><td><strong>Risk Level:</strong></td><td>
+                    {% if health_analysis.risk_level == 'low' %}
+                        <span class="badge badge-success">Low Risk</span>
+                    {% elif health_analysis.risk_level == 'medium' %}
+                        <span class="badge badge-warning">Medium Risk</span>
+                    {% else %}
+                        <span class="badge badge-danger">High Risk</span>
+                    {% endif %}
+                </td></tr>
+                <tr><td><strong>Work Eligibility:</strong></td><td>
+                    {% if health_analysis.work_eligibility == 'eligible' %}
+                        <span class="badge badge-success">Eligible</span>
+                    {% elif health_analysis.work_eligibility == 'pending' %}
+                        <span class="badge badge-warning">Pending</span>
+                    {% else %}
+                        <span class="badge badge-danger">Not Eligible</span>
+                    {% endif %}
+                </td></tr>
+                <tr><td><strong>Analysis Date:</strong></td><td>{{ health_analysis.created_at|date:"M j, Y g:i A" }}</td></tr>
+            </table>
+        </div>
+        
+        <div class="col-md-6">
+            <h4>Vital Signs</h4>
+            <table class="table table-bordered">
+                <tr><td><strong>Temperature:</strong></td><td>{{ health_check.temperature }}°F</td></tr>
+                <tr><td><strong>Heart Rate:</strong></td><td>{{ health_check.heart_rate }} bpm</td></tr>
+                <tr><td><strong>Blood Pressure:</strong></td><td>{{ health_check.blood_pressure_systolic }}/{{ health_check.blood_pressure_diastolic }}</td></tr>
+                <tr><td><strong>Oxygen Saturation:</strong></td><td>{{ health_check.oxygen_saturation }}%</td></tr>
+                <tr><td><strong>BMI:</strong></td><td>{{ health_check.bmi|floatformat:1 }}</td></tr>
+                <tr><td><strong>Sleep Hours:</strong></td><td>{{ health_check.sleep_hours }} hours</td></tr>
+                <tr><td><strong>Fatigue Level:</strong></td><td>{{ health_check.fatigue_level }}/10</td></tr>
+                <tr><td><strong>Stress Level:</strong></td><td>{{ health_check.stress_level }}/10</td></tr>
+            </table>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-12">
+            <h4>Health Risk Factors</h4>
+            <div class="risk-factors">
+                {% if health_check.covid_symptoms %}
+                    <span class="badge badge-danger">COVID Symptoms</span>
+                {% endif %}
+                {% if health_check.chronic_conditions %}
+                    <span class="badge badge-warning">Chronic Conditions</span>
+                {% endif %}
+                {% if health_check.temperature > 100 %}
+                    <span class="badge badge-danger">Fever</span>
+                {% endif %}
+                {% if health_check.oxygen_saturation < 96 %}
+                    <span class="badge badge-danger">Low Oxygen</span>
+                {% endif %}
+                {% if health_check.fatigue_level > 7 %}
+                    <span class="badge badge-warning">High Fatigue</span>
+                {% endif %}
+                {% if health_check.stress_level > 8 %}
+                    <span class="badge badge-warning">High Stress</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <h4>AI Analysis Charts</h4>
+            <div id="charts-container">
+                {% if analysis_data.charts %}
+                    {% if analysis_data.charts.vital_signs %}
+                        <div class="chart-item">
+                            <h5>Vital Signs Analysis</h5>
+                            <img src="data:image/png;base64,{{ analysis_data.charts.vital_signs }}" alt="Vital Signs Chart" class="img-fluid">
+                        </div>
+                    {% endif %}
+                    
+                    {% if analysis_data.charts.risk_heatmap %}
+                        <div class="chart-item mt-3">
+                            <h5>Risk Factors Heatmap</h5>
+                            <img src="data:image/png;base64,{{ analysis_data.charts.risk_heatmap }}" alt="Risk Heatmap" class="img-fluid">
+                        </div>
+                    {% endif %}
+                    
+                    {% if analysis_data.charts.health_gauge %}
+                        <div class="chart-item mt-3">
+                            <h5>Health Score Gauge</h5>
+                            <img src="data:image/png;base64,{{ analysis_data.charts.health_gauge }}" alt="Health Gauge" class="img-fluid">
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% if health_analysis.admin_decision == 'pending' %}
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <h4>Admin Decision</h4>
+            <div class="form-group">
+                <label for="adminNotes">Admin Notes:</label>
+                <textarea id="adminNotes" class="form-control" rows="3" placeholder="Enter your notes here..."></textarea>
+            </div>
+            <div class="decision-buttons">
+                <button class="btn btn-success" onclick="makeDecision('{{ volunteer_name }}', 'approved')">
+                    <i class="fas fa-check"></i> Approve Volunteer
+                </button>
+                <button class="btn btn-danger" onclick="makeDecision('{{ volunteer_name }}', 'rejected')">
+                    <i class="fas fa-times"></i> Reject Volunteer
+                </button>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <h4>Admin Decision</h4>
+            <p><strong>Status:</strong> 
+                {% if health_analysis.admin_decision == 'approved' %}
+                    <span class="badge badge-success">Approved</span>
+                {% else %}
+                    <span class="badge badge-danger">Rejected</span>
+                {% endif %}
+            </p>
+            {% if health_analysis.admin_notes %}
+                <p><strong>Notes:</strong> {{ health_analysis.admin_notes }}</p>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .health-analysis-container {
+        padding: 20px;
+    }
+    .chart-item {
+        text-align: center;
+        margin: 20px 0;
+    }
+    .chart-item img {
+        max-width: 100%;
+        height: auto;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+    }
+    .risk-factors .badge {
+        margin: 2px;
+        font-size: 12px;
+    }
+    .decision-buttons {
+        margin-top: 15px;
+    }
+    .decision-buttons .btn {
+        margin-right: 10px;
+    }
+    .table td {
+        padding: 8px;
+        vertical-align: middle;
+    }
+    .row {
+        margin-bottom: 20px;
+    }
+</style>

@@ -1,0 +1,355 @@
+{% load static %} {# keep static for future images/icons #}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Volunteer Reports & Activities</title>
+
+    {# Font‑Awesome #}
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+
+    <style>
+      /* === ALL YOUR ORIGINAL CSS – UNCHANGED === */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Arial", sans-serif;
+      }
+      body {
+        background: #f5f5f5;
+        color: #333;
+        line-height: 1.6;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        background: #fff;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        position: relative;
+        overflow: hidden;
+      }
+      .profile-section {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px 0;
+      }
+      .profile-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+      }
+      .profile-image-container {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 3px solid #28a745;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      .profile-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .profile-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+      }
+      .profile-name {
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 5px;
+      }
+      .profile-email {
+        font-size: 16px;
+        color: #666;
+      }
+      .edit-button {
+        position: absolute;
+        top: 0;
+        right: -40px;
+        background: none;
+        border: none;
+        color: #28a745;
+        font-size: 18px;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+      }
+      .edit-button:hover {
+        transform: scale(1.2);
+      }
+      .divider {
+        width: 100%;
+        height: 1px;
+        background: #e0e0e0;
+        margin: 20px 0;
+      }
+      .overall-review {
+        background: #28a745;
+        padding: 15px 20px;
+        border-radius: 5px;
+        color: #fff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        height: 60px;
+      }
+      .overall-review h3 {
+        font-size: 18px;
+        font-weight: 600;
+      }
+      .stars-container {
+        display: flex;
+        gap: 5px;
+      }
+      .stars-container i {
+        color: #fff;
+        font-size: 20px;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+      }
+      .stars-container i:hover {
+        transform: scale(1.2);
+      }
+      .stars-container i.active {
+        color: #fff;
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+      }
+      .testimonials-section {
+        padding: 20px 0;
+      }
+      .testimonials-header {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+      .subtitle {
+        color: #28a745;
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        margin-bottom: 10px;
+      }
+      .title {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 20px;
+        color: #222;
+      }
+      .description {
+        max-width: 700px;
+        margin: 0 auto;
+        color: #666;
+        font-size: 16px;
+      }
+      .testimonials-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 30px;
+        justify-content: center;
+      }
+      .testimonial-card {
+        flex: 1;
+        min-width: 300px;
+        max-width: 350px;
+        padding: 25px;
+        border-radius: 5px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        background: #fff;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+      .testimonial-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      }
+      .testimonial-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+      .testimonial-info {
+        text-align: center;
+      }
+      .testimonial-name {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 5px;
+      }
+      .testimonial-position {
+        font-size: 12px;
+        color: #666;
+      }
+      .testimonial-rating {
+        margin: 15px 0;
+        text-align: center;
+      }
+      .testimonial-rating i {
+        color: #28a745;
+        font-size: 16px;
+        margin-right: 2px;
+      }
+      .testimonial-text {
+        color: #666;
+        font-size: 14px;
+        line-height: 1.6;
+        text-align: center;
+      }
+      @media (max-width: 768px) {
+        .testimonials-container {
+          flex-direction: column;
+          align-items: center;
+        }
+        .testimonial-card {
+          width: 100%;
+          max-width: 100%;
+        }
+        .title {
+          font-size: 28px;
+        }
+        .overall-review {
+          flex-direction: column;
+          height: auto;
+          padding: 15px;
+          gap: 10px;
+        }
+      }
+      .container::before,
+      .container::after {
+        content: "";
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        background: #28a745;
+        transform: rotate(45deg);
+        z-index: -1;
+      }
+      .container::before {
+        top: -100px;
+        right: -100px;
+      }
+      .container::after {
+        bottom: -100px;
+        left: -100px;
+      }
+      .rating-circle {
+        width: 30px;
+        height: 30px;
+        background: #28a745;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- ========== Profile Section ========== -->
+      <div class="profile-section">
+        <div class="profile-container">
+          <div class="profile-image-container">
+            {# Placeholder image if volunteer has no avatar #}
+            <img
+              src="{% static 'images/default_avatar.png' %}"
+              alt="Profile Image"
+              class="profile-image"
+            />
+          </div>
+          <div class="profile-info">
+            {# `volunteer` comes from your context #}
+            <h3 class="profile-name">{{ volunteer.full_name }}</h3>
+            <p class="profile-email">{{ volunteer.email }}</p>
+            <button class="edit-button"><i class="fas fa-edit"></i></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div class="divider"></div>
+
+      <!-- ========== Overall Review Section (static stars for now) ========== -->
+      <div class="overall-review">
+        <h3>Overall Activity</h3>
+        <div class="stars-container">
+          {% for i in "12345" %}
+          <i class="fas fa-star active" data-rating="{{ forloop.counter }}"></i>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- ========== Reports Section ========== -->
+      <div class="testimonials-section">
+        <div class="testimonials-header">
+          <p class="subtitle">REPORTS</p>
+          <h2 class="title">DONOR REPORTS BY ME</h2>
+          <p class="description">
+            Below you'll find reports you've created about donors during your volunteer activities.
+          </p>
+        </div>
+
+        <div class="testimonials-container">
+          {% for report in reports %}
+          <div class="testimonial-card">
+            <div class="testimonial-header">
+              <div class="testimonial-info">
+                <h3 class="testimonial-name">{{ report.donor_name }}</h3>
+                <p class="testimonial-position">
+                  {{ report.created_at|date:"F j, Y g:i A" }}
+                </p>
+              </div>
+            </div>
+            <div class="testimonial-rating">
+              <div class="rating-circle">★</div>
+            </div>
+            <p class="testimonial-text">{{ report.message }}</p>
+          </div>
+          {% empty %}
+          <p style="text-align: center; color: #999">No reports found.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <!-- /container -->
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        /* === Existing star‑rating logic (overall review) === */
+        const stars = document.querySelectorAll(".stars-container i");
+        stars.forEach((star) => {
+          star.addEventListener("click", () => {
+            const rating = parseInt(star.dataset.rating);
+            stars.forEach((s) => {
+              s.classList.toggle(
+                "active",
+                parseInt(s.dataset.rating) <= rating
+              );
+            });
+          });
+        });
+
+        /* === Profile quick‑edit (demo only) === */
+        document.querySelector(".edit-button").addEventListener("click", () => {
+          const nameEl = document.querySelector(".profile-name");
+          const mailEl = document.querySelector(".profile-email");
+          const newName = prompt("Enter new name:", nameEl.textContent);
+          if (newName) nameEl.textContent = newName;
+          const newEmail = prompt("Enter new email:", mailEl.textContent);
+          if (newEmail) mailEl.textContent = newEmail;
+        });
+      });
+    </script>
+  </body>
+</html>

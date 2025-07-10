@@ -28,4 +28,8 @@ urlpatterns = [
     path('delete_inventory/<int:id>/', views.delete_inventory, name='delete_inventory'),
     path('edit_notification/<int:id>/', views.edit_notification, name='edit_notification'),
     path('delete_notification/<int:id>/', views.delete_notification, name='delete_notification'),
+    path('health-analysis/<str:volunteer_name>/', views.admin_health_analysis, name='admin_health_analysis'),
+    path('health-decision/<str:volunteer_name>/', views.admin_health_decision, name='admin_health_decision'),
+    path('adminpanel/health-analysis/<str:volunteer_email>/', views.admin_health_analysis, name='admin_health_analysis'),
+    path('adminpanel/delete-volunteer/<str:volunteer_email>/', views.admin_delete_volunteer, name='admin_delete_volunteer'),
 ] 

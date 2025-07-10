@@ -16,8 +16,10 @@ urlpatterns = [
     path('inventory/', views.inventory_view, name='inventory'),
     path('analytic/', views.analytic_view, name='analytic'),
     path('notification/', views.notification_view, name='notification'),
+    path('api/notification/', views.notification_api, name='notification_api'),
     path('logout/', views.logout_view, name='logout'),
     path('donor-reports/', views.donor_report_view, name='donor_reports'),
+    path('report-volunteer/', views.report_volunteer, name='report_volunteer'),
     
     path('my_donation/', views.my_donation, name='my_donation'),
 

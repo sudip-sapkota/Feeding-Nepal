@@ -133,6 +133,7 @@
                   <th>Expiry Date</th>
                   <th>Created At</th>
                   <th>Updated At</th>
+                  <th>Collection Status</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -151,6 +152,22 @@
                   <td>{{ item.created_at|date:"Y-m-d H:i" }}</td>
                   <td>{{ item.updated_at|date:"Y-m-d H:i" }}</td>
                   <td>
+                    {% if item.collect == "yes" %}
+                      <div style="color: #28a745; font-weight: bold; margin-bottom: 4px;">
+                        ✅ Collected
+                      </div>
+                      {% if item.collected_by_name %}
+                        <div style="font-size: 12px; color: #6c757d;">
+                          <strong>By:</strong> {{ item.collected_by_name }}<br>
+                          <strong>Phone:</strong> {{ item.collected_by_phone|default:"N/A" }}<br>
+                          <strong>At:</strong> {{ item.collected_at|date:"M d, Y H:i"|default:"N/A" }}
+                        </div>
+                      {% endif %}
+                    {% else %}
+                      <span style="color: #ffc107; font-weight: bold;">⏳ Pending</span>
+                    {% endif %}
+                  </td>
+                  <td>
                     <div class="dropdown">
   <button onclick="toggleDropdown(this)" class="dropbtn">
     Actions ▼
@@ -167,7 +184,7 @@
                 </tr>
                 {% empty %}
                 <tr>
-                  <td colspan="9" style="text-align: center">
+                  <td colspan="10" style="text-align: center">
                     No inventory items found.
                   </td>
                 </tr>

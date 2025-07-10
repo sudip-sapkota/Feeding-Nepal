@@ -1,146 +1,355 @@
-{% load static %}
+{% load static %} {# keep static for future images/icons #}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Testimonials with Profile</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-  <style>
-    /* [Same CSS as you had before — keep that part unchanged] */
-    /* Add the following for modal styles */
-    #reportModal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.6);
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Donor Reports & Testimonials</title>
 
-    #reportModal .modal-content {
-      background: #fff;
-      padding: 30px;
-      max-width: 700px;
-      width: 90%;
-      border-radius: 8px;
-      position: relative;
-      max-height: 80vh;
-      overflow-y: auto;
-    }
+    {# Font‑Awesome #}
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
 
-    #reportModal .close-btn {
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      background: none;
-      border: none;
-      font-size: 24px;
-      color: #999;
-      cursor: pointer;
-    }
-
-    .report-box {
-      margin-bottom: 20px;
-      border-bottom: 1px solid #eee;
-      padding-bottom: 15px;
-    }
-
-    .report-box p {
-      margin: 5px 0;
-    }
-
-    .view-report-btn {
-      display: block;
-      margin: 30px auto;
-      background: #ffb400;
-      color: #fff;
-      padding: 12px 25px;
-      border: none;
-      border-radius: 5px;
-      font-weight: bold;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    .report-title {
-      text-align: center;
-      margin-bottom: 20px;
-      font-size: 22px;
-      color: #ffb400;
-      font-weight: bold;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <!-- Your entire UI stays the same here -->
-    <!-- ... [your profile, testimonial and review code] ... -->
-
-    <!-- View Report Button -->
-    <button id="openReportModal" class="view-report-btn">View Report</button>
-  </div>
-
-  <!-- Report Modal -->
-  <div id="reportModal">
-    <div class="modal-content">
-      <button class="close-btn" id="closeReportModal">&times;</button>
-      <div class="report-title">Donor Reports</div>
-
-      {% for report in reports %}
-      <div class="report-box">
-        <p><strong>Donor ID:</strong> {{ report.donor_id }}</p>
-        <p><strong>Volunteer ID:</strong> {{ report.volunteer_id }}</p>
-        <p><strong>Message:</strong> {{ report.message }}</p>
-        <p><strong>Date:</strong> {{ report.created_at|date:"F j, Y, g:i a" }}</p>
+    <style>
+      /* === ALL YOUR ORIGINAL CSS – UNCHANGED === */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Arial", sans-serif;
+      }
+      body {
+        background: #f5f5f5;
+        color: #333;
+        line-height: 1.6;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        background: #fff;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        position: relative;
+        overflow: hidden;
+      }
+      .profile-section {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px 0;
+      }
+      .profile-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+      }
+      .profile-image-container {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 3px solid #ffb400;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      .profile-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .profile-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+      }
+      .profile-name {
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 5px;
+      }
+      .profile-email {
+        font-size: 16px;
+        color: #666;
+      }
+      .edit-button {
+        position: absolute;
+        top: 0;
+        right: -40px;
+        background: none;
+        border: none;
+        color: #ffb400;
+        font-size: 18px;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+      }
+      .edit-button:hover {
+        transform: scale(1.2);
+      }
+      .divider {
+        width: 100%;
+        height: 1px;
+        background: #e0e0e0;
+        margin: 20px 0;
+      }
+      .overall-review {
+        background: #ffb400;
+        padding: 15px 20px;
+        border-radius: 5px;
+        color: #fff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        height: 60px;
+      }
+      .overall-review h3 {
+        font-size: 18px;
+        font-weight: 600;
+      }
+      .stars-container {
+        display: flex;
+        gap: 5px;
+      }
+      .stars-container i {
+        color: #fff;
+        font-size: 20px;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+      }
+      .stars-container i:hover {
+        transform: scale(1.2);
+      }
+      .stars-container i.active {
+        color: #fff;
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+      }
+      .testimonials-section {
+        padding: 20px 0;
+      }
+      .testimonials-header {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+      .subtitle {
+        color: #ffb400;
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        margin-bottom: 10px;
+      }
+      .title {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 20px;
+        color: #222;
+      }
+      .description {
+        max-width: 700px;
+        margin: 0 auto;
+        color: #666;
+        font-size: 16px;
+      }
+      .testimonials-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 30px;
+        justify-content: center;
+      }
+      .testimonial-card {
+        flex: 1;
+        min-width: 300px;
+        max-width: 350px;
+        padding: 25px;
+        border-radius: 5px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        background: #fff;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+      .testimonial-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      }
+      .testimonial-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+      .testimonial-info {
+        text-align: center;
+      }
+      .testimonial-name {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 5px;
+      }
+      .testimonial-position {
+        font-size: 12px;
+        color: #666;
+      }
+      .testimonial-rating {
+        margin: 15px 0;
+        text-align: center;
+      }
+      .testimonial-rating i {
+        color: #ffb400;
+        font-size: 16px;
+        margin-right: 2px;
+      }
+      .testimonial-text {
+        color: #666;
+        font-size: 14px;
+        line-height: 1.6;
+        text-align: center;
+      }
+      @media (max-width: 768px) {
+        .testimonials-container {
+          flex-direction: column;
+          align-items: center;
+        }
+        .testimonial-card {
+          width: 100%;
+          max-width: 100%;
+        }
+        .title {
+          font-size: 28px;
+        }
+        .overall-review {
+          flex-direction: column;
+          height: auto;
+          padding: 15px;
+          gap: 10px;
+        }
+      }
+      .container::before,
+      .container::after {
+        content: "";
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        background: #ffb400;
+        transform: rotate(45deg);
+        z-index: -1;
+      }
+      .container::before {
+        top: -100px;
+        right: -100px;
+      }
+      .container::after {
+        bottom: -100px;
+        left: -100px;
+      }
+      .rating-circle {
+        width: 30px;
+        height: 30px;
+        background: #ffb400;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- ========== Profile Section ========== -->
+      <div class="profile-section">
+        <div class="profile-container">
+          <div class="profile-image-container">
+            {# Placeholder image if donor has no avatar #}
+            <img
+              src="{% static 'images/default_avatar.png' %}"
+              alt="Profile Image"
+              class="profile-image"
+            />
+          </div>
+          <div class="profile-info">
+            {# `donor` comes from your context‑processor #}
+            <h3 class="profile-name">{{ donor.name }}</h3>
+            <p class="profile-email">{{ donor.email }}</p>
+            <button class="edit-button"><i class="fas fa-edit"></i></button>
+          </div>
+        </div>
       </div>
-      {% empty %}
-      <p style="text-align:center; color:#999;">No reports available.</p>
-      {% endfor %}
-    </div>
-  </div>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      // Star rating logic remains unchanged
-      const stars = document.querySelectorAll(".stars-container i");
-      stars.forEach((star) => {
-        star.addEventListener("click", () => {
-          const rating = parseInt(star.dataset.rating);
-          stars.forEach(s => {
-            s.classList.toggle("active", parseInt(s.dataset.rating) <= rating);
+      <!-- Divider -->
+      <div class="divider"></div>
+
+      <!-- ========== Overall Review Section (static stars for now) ========== -->
+      <div class="overall-review">
+        <h3>Overall Review</h3>
+        <div class="stars-container">
+          {% for i in "12345" %}
+          <i class="fas fa-star active" data-rating="{{ forloop.counter }}"></i>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- ========== Testimonials / Reports Section ========== -->
+      <div class="testimonials-section">
+        <div class="testimonials-header">
+          <p class="subtitle">REPORTS</p>
+          <h2 class="title">WHAT VOLUNTEERS/ADMINS SAY</h2>
+          <p class="description">
+            Below you’ll find feedback and notes related to your past donations.
+          </p>
+        </div>
+
+        <div class="testimonials-container">
+          {% for report in reports %}
+          <div class="testimonial-card">
+            <div class="testimonial-header">
+              <div class="testimonial-info">
+                <h3 class="testimonial-name">{{ report.volunteer_name }}</h3>
+                <p class="testimonial-position">
+                  {{ report.created_at|date:"F j, Y g:i A" }}
+                </p>
+              </div>
+            </div>
+            <div class="testimonial-rating">
+              <div class="rating-circle">★</div>
+            </div>
+            <p class="testimonial-text">{{ report.message }}</p>
+          </div>
+          {% empty %}
+          <p style="text-align: center; color: #999">No reports found.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <!-- /container -->
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        /* === Existing star‑rating logic (overall review) === */
+        const stars = document.querySelectorAll(".stars-container i");
+        stars.forEach((star) => {
+          star.addEventListener("click", () => {
+            const rating = parseInt(star.dataset.rating);
+            stars.forEach((s) => {
+              s.classList.toggle(
+                "active",
+                parseInt(s.dataset.rating) <= rating
+              );
+            });
           });
         });
-      });
 
-      // Edit profile
-      document.querySelector(".edit-button").addEventListener("click", () => {
-        const name = document.querySelector(".profile-name");
-        const email = document.querySelector(".profile-email");
-        const newName = prompt("Enter new name:", name.textContent);
-        if (newName) name.textContent = newName;
-        const newEmail = prompt("Enter new email:", email.textContent);
-        if (newEmail) email.textContent = newEmail;
+        /* === Profile quick‑edit (demo only) === */
+        document.querySelector(".edit-button").addEventListener("click", () => {
+          const nameEl = document.querySelector(".profile-name");
+          const mailEl = document.querySelector(".profile-email");
+          const newName = prompt("Enter new name:", nameEl.textContent);
+          if (newName) nameEl.textContent = newName;
+          const newEmail = prompt("Enter new email:", mailEl.textContent);
+          if (newEmail) mailEl.textContent = newEmail;
+        });
       });
-
-      // Modal open/close
-      document.getElementById("openReportModal").addEventListener("click", () => {
-        document.getElementById("reportModal").style.display = "flex";
-      });
-
-      document.getElementById("closeReportModal").addEventListener("click", () => {
-        document.getElementById("reportModal").style.display = "none";
-      });
-
-      // Optional: close modal on outside click
-      window.addEventListener("click", (e) => {
-        if (e.target.id === "reportModal") {
-          document.getElementById("reportModal").style.display = "none";
-        }
-      });
-    });
-  </script>
-</body>
+    </script>
+  </body>
 </html>
